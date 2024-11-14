@@ -1,0 +1,39 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Editors
+.vscode/
+vscode
+.venv/**/*
+
+# Mac/OSX
+.DS_Store
+
+# package
+build
+dist
+*.egg-info
+
+# test output directory
+data/
+output/
+mnt/
+downloaded_files
+test/html
+test/seed_file
+# celerybeat-db
+*.db
+
+# test log
+log/**
+
+#
+.vscode/*
+.pylntrc
+evidences
+.excel
+
+
+celerybeat-schedule

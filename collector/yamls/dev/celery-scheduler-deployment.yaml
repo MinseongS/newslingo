@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-scheduler
+  namespace: newslingo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-scheduler
+  template:
+    metadata:
+      labels:
+        app: celery-scheduler
+    spec:
+      containers:
+      - name: celery-scheduler
+        image: celery-app
+        command: ["celery", "-A", "celery_app", "beat", "--loglevel=info"]
+        env:
+        - name: CELERY_BROKER_URL
+          value: "pyamqp://guest@rabbitmq//"

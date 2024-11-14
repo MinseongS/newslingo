@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker-news
+  namespace: newslingo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery-worker-news
+  template:
+    metadata:
+      labels:
+        app: celery-worker-news
+    spec:
+      containers:
+      - name: celery-worker-news
+        image: celery-app
+        command: ["celery", "-A", "tasks", "worker", "--loglevel=info"]
+        env:
+        - name: CELERY_BROKER_URL
+          value: "pyamqp://guest@rabbitmq//"
