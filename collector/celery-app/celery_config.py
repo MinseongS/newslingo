@@ -11,10 +11,7 @@ RABBITMQ_USER = os.getenv("RABBITMQ_DEFAULT_USER", "guest")
 RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS", "guest")
 
 # RabbitMQ 서버 호스트 설정
-RABBITMQ_SERVER_HOST = os.getenv(
-    "RABBITMQ_EXTERNAL_SERVER_HOST",
-    "127.0.0.1",
-)
+RABBITMQ_SERVER_HOST = os.getenv("CELERY_BROKER_URL", "localhost")
 RABBITMQ_PORT = os.getenv("RABBITMQ_EXTERNAL_PORT", "5672")
 broker_url = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_SERVER_HOST}:{RABBITMQ_PORT}"
 result_backend_transport_options = broker_transport_options = {
