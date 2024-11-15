@@ -15,8 +15,10 @@ spec:
     spec:
       containers:
       - name: celery-scheduler
-        image: celery-app
-        command: ["celery", "-A", "celery_app", "beat", "--loglevel=info"]
+        image: localhost:5000/celery-app:1.0
+        command: ["celery", "-A", "celery-app.scheduler", "beat", "--loglevel=info"]
         env:
         - name: CELERY_BROKER_URL
-          value: "pyamqp://guest@rabbitmq//"
+          value: "rabbitmq"
+        - name: REDIS_EXTERNAL_SERVER_HOST
+          value: "redis"
