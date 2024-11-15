@@ -36,4 +36,4 @@ evidences
 .excel
 
 
-celerybeat-schedule
+celerybeat-schedule.*
