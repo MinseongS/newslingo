@@ -1,0 +1,1 @@
+docker build -t localhost:5000/celery-app:1.0 .
