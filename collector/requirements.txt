@@ -9,6 +9,7 @@ kombu==5.4.2
 prompt_toolkit==3.0.48
 python-dateutil==2.9.0.post0
 redis==5.2.0
+requests==2.32.3
 setuptools==75.1.0
 six==1.16.0
 tzdata==2024.2
