@@ -37,3 +37,5 @@ evidences
 
 
 celerybeat-schedule.*
+
+.env*
