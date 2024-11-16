@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-LOG_FILE = 'logs/scheduler.log'
+LOG_FILE = 'celery_app/logs/scheduler.log'
 
 logging.basicConfig(
     level=logging.INFO,

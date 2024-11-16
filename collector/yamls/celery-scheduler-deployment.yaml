@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: celery-scheduler
-        image: localhost:5000/celery-app:1.0
-        command: ["celery", "-A", "celery-app.scheduler", "beat", "--loglevel=info"]
+        image: localhost:5000/celery_app:1.0
+        command: ["celery", "-A", "celery_app.scheduler", "beat", "--loglevel=info"]
         env:
         - name: CELERY_BROKER_URL
           value: "rabbitmq"
