@@ -12,5 +12,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "celery", "-A", "celery-app.scheduler"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "celery", "-A", "celery_app.scheduler"]
 CMD ["worker", "--loglevel=info", "-f", "/app/log/worker.log"]
