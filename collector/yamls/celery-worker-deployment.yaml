@@ -15,10 +15,18 @@ spec:
     spec:
       containers:
       - name: celery-worker-news
-        image: localhost:5000/celery_app:1.0
-        command: ["celery", "-A", "celery_app.scheduler", "worker", "--loglevel=info"]
+        image: localhost:5000/celery_app:latest
+        command: ["celery", "-A", "celery_app.scheduler", "worker", "--loglevel=info", "--logfile=/logs/scheduler.log"]
+        volumeMounts:
+        - name: logs
+          mountPath: /logs
         env:
         - name: CELERY_BROKER_URL
           value: "rabbitmq"
         - name: REDIS_EXTERNAL_SERVER_HOST
           value: "redis"
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log/newslingo
+          type: DirectoryOrCreate

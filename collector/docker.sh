@@ -1,1 +1,1 @@
-docker build -t localhost:5000/celery_app:1.0 .
+docker build -t localhost:5000/celery_app:latest -t localhost:5000/celery_app:1.1 .

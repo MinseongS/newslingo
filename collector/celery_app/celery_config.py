@@ -58,7 +58,7 @@ task_queues = (
 beat_schedule = {
     'collect_news': {
         'task': 'scheduler.collect_news',  # 작업 경로는 실제 경로로 수정 필요
-        'schedule': timedelta(seconds=5),         # 1초마다 실행
+        'schedule': timedelta(hours=6),         # 1초마다 실행
         'options': {'queue': 'collector'},        # collector 큐로 지정
     },
 }

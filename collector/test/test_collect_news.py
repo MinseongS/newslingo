@@ -1,5 +1,12 @@
+import pytest
+from celery_app.models.init_db import init_postgresql
 from celery_app.services.collect_news import get_arirang_news
 from celery_app.services.translate import googletrans_translate
+from celery_app.scheduler import collect_news
+
+@pytest.fixture(autouse=True)
+def init(request):
+    init_postgresql()
 
 def test_get_arirang_news():
     news = get_arirang_news()
@@ -12,3 +19,6 @@ def test_translate():
     target_lang = "ko"
     translated_text = googletrans_translate(text=text, source_lang=source_lang, target_lang=target_lang)
     assert isinstance(translated_text, str)
+
+def test_collect_news_scheduler():
+    collect_news()
