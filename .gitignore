@@ -39,3 +39,6 @@ evidences
 celerybeat-schedule.*
 
 .env*
+
+logs/
+secret.yaml
