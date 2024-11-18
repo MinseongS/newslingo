@@ -16,7 +16,7 @@ spec:
       containers:
       - name: celery-worker-news
         image: localhost:5000/celery_app:latest
-        command: ["celery", "-A", "celery_app.scheduler", "worker", "--loglevel=info", "--logfile=/logs/scheduler.log"]
+        command: ["celery", "-A", "celery_app.scheduler", "worker", "-Q", "collector", "--loglevel=info", "--logfile=/logs/scheduler.log"]
         volumeMounts:
         - name: logs
           mountPath: /logs

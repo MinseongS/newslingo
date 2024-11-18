@@ -5,8 +5,6 @@ import logging as log
 from dotenv import load_dotenv
 from celery_app.configs import logging_config
 
-logger = log.getLogger("collect_news")
-
 load_dotenv('celery_app/configs/.env.local')
 
 ARIRANG_URL = os.getenv("ARIRANG_URL")
