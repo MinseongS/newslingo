@@ -6,7 +6,7 @@ class NewsKorean(Base):
     __tablename__ = "news_korean"
 
     id = Column(Integer, primary_key=True, index=True)
-    news_id = Column(String, ForeignKey("news.news_id"), nullable=False)
+    news_id = Column(String, ForeignKey("news.news_id"), index=True, nullable=False)
     language = Column(String, default="ko", nullable=False)
     title = Column(Text, nullable=False)
     content = Column(Text, nullable=False)

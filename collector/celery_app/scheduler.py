@@ -3,7 +3,7 @@
 from celery import Celery
 from celery.signals import worker_process_init
 from . import celery_config
-from .models.init_db import init_postgresql, get_db
+from .models.init_db import init_postgresql, get_db, close_db
 from .services.collect_news import get_arirang_news
 from .services.translate import googletrans_translate
 
@@ -34,6 +34,11 @@ def collect_news():
         try:
             news_id = item["news_url"].split("id=")[-1]
             log.debug(f"Processing news_id: {news_id}")
+
+            existing_news = db.query(News).filter_by(news_id=news_id).first()
+            if existing_news:
+                log.info(f"News entry already exists for news_id: {news_id}, skipping.")
+                continue
 
             news_data = {
                 "news_id": news_id,
@@ -77,4 +82,4 @@ def collect_news():
             db.rollback()  # 트랜잭션 롤백
             log.error(f"Error processing news_id: {item.get('news_id', 'unknown')} - {e}")
         finally:
-            db.close()  # 연결 닫기
+            close_db()  # 연결 닫기
