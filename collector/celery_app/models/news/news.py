@@ -24,10 +24,6 @@ class News(Base):
         :param thum_url: Thumbnail URL (optional)
         :return: Newly created News object
         """
-        existing_news = db.query(cls).filter_by(news_id=news_id).first()
-        if existing_news:
-            return existing_news  # Return the existing record if it exists
-
         new_news = cls(
             news_id=news_id,
             news_url=news_url,

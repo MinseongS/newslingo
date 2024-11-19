@@ -3,7 +3,7 @@
 from celery import Celery
 from celery.signals import worker_process_init
 from . import celery_config
-from .models.init_db import init_postgresql, get_db, close_db
+from .models.init_db import init_postgresql, Atomic
 from .services.collect_news import get_arirang_news
 from .services.translate import googletrans_translate
 
@@ -26,60 +26,61 @@ def init_worker(**kwargs):
 
 @celery_app.task(name="scheduler.collect_news")
 def collect_news():
-    db = get_db()
     news = get_arirang_news()
     log.info(f"Fetched {len(news['items'])} news items from Arirang.")
-    
     for item in news["items"]:
         try:
-            news_id = item["news_url"].split("id=")[-1]
-            log.debug(f"Processing news_id: {news_id}")
+            # Atomic 컨텍스트 매니저로 트랜잭션 관리
+            with Atomic() as db:
+                news_id = item["news_url"].split("id=")[-1]
+                log.debug(f"Processing news_id: {news_id}")
 
-            existing_news = db.query(News).filter_by(news_id=news_id).first()
-            if existing_news:
-                log.info(f"News entry already exists for news_id: {news_id}, skipping.")
-                continue
+                # 기존 뉴스 데이터 확인
+                existing_news = db.query(News).filter_by(news_id=news_id).first()
+                if existing_news:
+                    log.info(f"News entry already exists for news_id: {news_id}, skipping.")
+                    continue
 
-            news_data = {
-                "news_id": news_id,
-                "news_url": item["news_url"],
-                "thum_url": item["thum_url"],
-                "broadcast_date": item["broadcast_date"],
-                "title": item["title"],
-                "content": item["content"],
-            }
+                news_data = {
+                    "news_id": news_id,
+                    "news_url": item["news_url"],
+                    "thum_url": item["thum_url"],
+                    "broadcast_date": item["broadcast_date"],
+                    "title": item["title"],
+                    "content": item["content"],
+                }
 
-            with db.begin():  # 트랜잭션 시작
-                # Create News entry or fetch existing one
+                # News 엔트리 생성
                 news_obj = News.create(
-                    db, 
-                    news_id=news_data["news_id"], 
-                    news_url=news_data["news_url"], 
-                    broadcast_date=news_data["broadcast_date"], 
+                    db,
+                    news_id=news_data["news_id"],
+                    news_url=news_data["news_url"],
+                    broadcast_date=news_data["broadcast_date"],
                     thum_url=news_data["thum_url"]
                 )
-                log.info(f"News entry created or fetched: {news_id}")
+                log.info(f"News entry created: {news_id}")
 
-                # Check if English translation already exists
-                existing_news_english = db.query(NewsEnglish).filter_by(news_id=news_obj.news_id).first()
-                if not existing_news_english:
-                    NewsEnglish.create(db, news_id=news_obj.news_id, title=news_data["title"], content=news_data["content"])
+                # English 번역 데이터 확인 및 생성
+                if not db.query(NewsEnglish).filter_by(news_id=news_obj.news_id).first():
+                    NewsEnglish.create(
+                        db,
+                        news_id=news_obj.news_id,
+                        title=news_data["title"],
+                        content=news_data["content"]
+                    )
                     log.info(f"English news entry created for news_id: {news_id}")
-                else:
-                    log.debug(f"English news entry already exists for news_id: {news_id}")
 
-                # Translate to Korean and create Korean news entry if not exists
-                existing_news_korean = db.query(NewsKorean).filter_by(news_id=news_obj.news_id).first()
-                if not existing_news_korean:
-                    translated_title = googletrans_translate(item["title"], "en", "ko")
-                    translated_content = googletrans_translate(item["content"], "en", "ko")
-                    NewsKorean.create(db, news_id=news_obj.news_id, title=translated_title.text, content=translated_content.text)
+                # Korean 번역 데이터 확인 및 생성
+                if not db.query(NewsKorean).filter_by(news_id=news_obj.news_id).first():
+                    translated_title = googletrans_translate(item["title"], "en", "ko").text
+                    translated_content = googletrans_translate(item["content"], "en", "ko").text
+                    NewsKorean.create(
+                        db,
+                        news_id=news_obj.news_id,
+                        title=translated_title,
+                        content=translated_content
+                    )
                     log.info(f"Korean translation created for news_id: {news_id}")
-                else:
-                    log.debug(f"Korean translation already exists for news_id: {news_id}")
 
         except Exception as e:
-            db.rollback()  # 트랜잭션 롤백
             log.error(f"Error processing news_id: {item.get('news_id', 'unknown')} - {e}")
-        finally:
-            close_db()  # 연결 닫기
