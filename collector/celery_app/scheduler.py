@@ -15,14 +15,16 @@ import logging as log
 from .configs import logging_config
 
 
-celery_app = Celery('scheduler')
+celery_app = Celery("scheduler")
 celery_app.config_from_object(celery_config)
+
 
 # Worker process initialization hook to set up connections
 @worker_process_init.connect
 def init_worker(**kwargs):
     init_postgresql()
     log.info("Worker process initialized, database connection set up.")
+
 
 @celery_app.task(name="scheduler.collect_news")
 def collect_news():
@@ -38,7 +40,9 @@ def collect_news():
                 # 기존 뉴스 데이터 확인
                 existing_news = db.query(News).filter_by(news_id=news_id).first()
                 if existing_news:
-                    log.info(f"News entry already exists for news_id: {news_id}, skipping.")
+                    log.info(
+                        f"News entry already exists for news_id: {news_id}, skipping."
+                    )
                     continue
 
                 news_data = {
@@ -56,31 +60,41 @@ def collect_news():
                     news_id=news_data["news_id"],
                     news_url=news_data["news_url"],
                     broadcast_date=news_data["broadcast_date"],
-                    thum_url=news_data["thum_url"]
+                    thum_url=news_data["thum_url"],
                 )
                 log.info(f"News entry created: {news_id}")
 
                 # English 번역 데이터 확인 및 생성
-                if not db.query(NewsEnglish).filter_by(news_id=news_obj.news_id).first():
+                if (
+                    not db.query(NewsEnglish)
+                    .filter_by(news_id=news_obj.news_id)
+                    .first()
+                ):
                     NewsEnglish.create(
                         db,
                         news_id=news_obj.news_id,
                         title=news_data["title"],
-                        content=news_data["content"]
+                        content=news_data["content"],
                     )
                     log.info(f"English news entry created for news_id: {news_id}")
 
                 # Korean 번역 데이터 확인 및 생성
                 if not db.query(NewsKorean).filter_by(news_id=news_obj.news_id).first():
-                    translated_title = googletrans_translate(item["title"], "en", "ko").text
-                    translated_content = googletrans_translate(item["content"], "en", "ko").text
+                    translated_title = googletrans_translate(
+                        item["title"], "en", "ko"
+                    ).text
+                    translated_content = googletrans_translate(
+                        item["content"], "en", "ko"
+                    ).text
                     NewsKorean.create(
                         db,
                         news_id=news_obj.news_id,
                         title=translated_title,
-                        content=translated_content
+                        content=translated_content,
                     )
                     log.info(f"Korean translation created for news_id: {news_id}")
 
         except Exception as e:
-            log.error(f"Error processing news_id: {item.get('news_id', 'unknown')} - {e}")
+            log.error(
+                f"Error processing news_id: {item.get('news_id', 'unknown')} - {e}"
+            )

@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from celery_app.models.base import Base
 
-load_dotenv('celery_app/configs/.env.local')
+load_dotenv("celery_app/configs/.env.local")
 
 # 데이터베이스를 관리하는 클래스 정의
 SessionLocal = None
@@ -31,7 +31,7 @@ def init_postgresql():
         sessionmaker(autocommit=False, autoflush=False, bind=engine)
     )
     log.info("PostgreSQL database initialized.")
-    
+
     # 데이터베이스 테이블 생성
     Base.metadata.create_all(bind=engine)
 
@@ -41,7 +41,9 @@ def get_db():
     데이터베이스 세션 생성기.
     """
     if SessionLocal is None:
-        raise ValueError("Database has not been initialized. Call init_postgresql() first.")
+        raise ValueError(
+            "Database has not been initialized. Call init_postgresql() first."
+        )
     db = SessionLocal()
     try:
         yield db
@@ -66,6 +68,7 @@ class Atomic:
     """
     원자적 트랜잭션 컨텍스트 매니저.
     """
+
     def __enter__(self):
         self.db = SessionLocal()
         self.transaction = self.db.begin()

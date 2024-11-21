@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy.orm import Session
 from celery_app.models.base import Base
+
 
 class NewsKorean(Base):
     __tablename__ = "news_korean"
@@ -22,11 +23,7 @@ class NewsKorean(Base):
         :param content: Content of the news in Korean
         :return: Newly created NewsKorean object
         """
-        new_news_korean = cls(
-            news_id=news_id,
-            title=title,
-            content=content
-        )
+        new_news_korean = cls(news_id=news_id, title=title, content=content)
         db.add(new_news_korean)
         db.commit()
         db.refresh(new_news_korean)
