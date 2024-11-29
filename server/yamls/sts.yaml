@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inference-server
+  namespace: model
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: NodePort
+  selector:
+    app: inference-server
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: inference-server
+  namespace: model
+spec:
+  serviceName: inference-server
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inference-server
+  template:
+    metadata:
+      labels:
+        app: inference-server
+    spec:
+      containers:
+      - name: inference-server
+        env:
+        - name: PROFILE
+          value: kube
+        image: registry.gocap.kr/template/inference-server:latest
+        resources:
+          limits:
+            nvidia.com/gpu: "1"
+        livenessProbe:
+          httpGet:
+            port: 8000
+            path: /api/v1/healthz
+          failureThreshold: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            port: 8000
+            path: /api/v1/healthz
+          failureThreshold: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 8000

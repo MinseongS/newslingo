@@ -1,0 +1,21 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: registry.gocap.kr/template/ai
+      platforms: ["linux/amd64"]
+      context: .
+      docker:
+        dockerfile: dockerfiles/Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: template
+        chartPath: helm
+        namespace: template
+        createNamespace: true
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO}}"
+          image.tag: "{{.IMAGE_TAG}}"
+
+
