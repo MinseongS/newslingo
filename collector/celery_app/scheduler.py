@@ -11,9 +11,9 @@ from .models.news.news import News
 from .models.news.english_news import NewsEnglish
 from .models.news.korean_news import NewsKorean
 
-import logging as log
-from .configs import logging_config
+from .configs.logging_config import get_logger, init_log
 
+log = get_logger("scheduler")
 
 celery_app = Celery("scheduler")
 celery_app.config_from_object(celery_config)
@@ -23,6 +23,8 @@ celery_app.config_from_object(celery_config)
 @worker_process_init.connect
 def init_worker(**kwargs):
     init_postgresql()
+    init_log()
+    log.info("Initializing worker process...")
     log.info("Worker process initialized, database connection set up.")
 
 

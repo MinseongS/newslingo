@@ -1,9 +1,10 @@
 import requests
 import json
 import os
-import logging as log
 from dotenv import load_dotenv
-from celery_app.configs import logging_config
+from celery_app.configs.logging_config import get_logger
+
+log = get_logger("collect_news")
 
 load_dotenv('celery_app/configs/.env.local')
 

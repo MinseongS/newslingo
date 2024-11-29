@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8, euc-kr -*-
-import logging as log
 import os
-from celery_app.configs import logging_config
+from celery_app.configs.logging_config import get_logger
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from celery_app.models.base import Base
+
+log = get_logger("db")
 
 load_dotenv("celery_app/configs/.env.local")
 
