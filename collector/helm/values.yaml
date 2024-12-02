@@ -1,0 +1,59 @@
+
+celeryScheduler:
+  celeryScheduler:
+    image:
+      repository: localhost:5000/celery_app
+      tag: latest
+  replicas: 1
+celeryWorkerNews:
+  celeryWorkerNews:
+    image:
+      repository: localhost:5000/celery_app
+      tag: latest
+  replicas: 1
+postgres:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  postgres:
+    image:
+      repository: postgres
+      tag: "13"
+  replicas: 1
+  type: NodePort
+postgresSecret:
+  postgresDb: "news"
+  postgresPassword: "CHANGE_ME_PASSWORD"
+  postgresUser: "minseong"
+pvc:
+  postgresPvc:
+    storageRequest: 5Gi
+rabbitmq:
+  ports:
+  - name: amqp
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: management
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  rabbitmq:
+    image:
+      repository: rabbitmq
+      tag: 3-management
+  replicas: 1
+  type: ClusterIP
+redis:
+  ports:
+  - port: 6379
+    protocol: TCP
+    targetPort: 6379
+  redis:
+    image:
+      repository: redis
+      tag: "6.2"
+  replicas: 1
+  type: ClusterIP
+
+

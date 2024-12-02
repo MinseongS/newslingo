@@ -1,0 +1,19 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: localhost:5000/celery_app
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  helm:
+    releases:
+      - name: newsling-collector
+        chartPath: helm
+        namespace: newslingo
+        createNamespace: true
+        setValues:
+          fullnameOverride: newslingo
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO}}"
+          image.tag: "{{.IMAGE_TAG}}"
