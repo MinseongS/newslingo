@@ -12,8 +12,6 @@ deploy:
         chartPath: helm
         namespace: newslingo
         createNamespace: true
-        setValues:
-          fullnameOverride: newslingo
         setValueTemplates:
           image.repository: "{{.IMAGE_REPO}}"
           image.tag: "{{.IMAGE_TAG}}"

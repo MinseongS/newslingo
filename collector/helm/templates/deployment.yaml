@@ -1,85 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helm.fullname" . }}-scheduler
-  labels:
-  {{- include "helm.labels" . | nindent 4 }}
-spec:
-  replicas: {{ .Values.celeryScheduler.replicas }}
-  selector:
-    matchLabels:
-      app: celery-scheduler
-    {{- include "helm.selectorLabels" . | nindent 6 }}
-  template:
-    metadata:
-      labels:
-        app: celery-scheduler
-      {{- include "helm.selectorLabels" . | nindent 8 }}
-    spec:
-      containers:
-      - command:
-        - celery
-        - -A
-        - celery_app.scheduler
-        - beat
-        - --loglevel=info
-        env:
-        - name: CELERY_BROKER_URL
-          value: rabbitmq
-        - name: REDIS_EXTERNAL_SERVER_HOST
-          value: redis
-        image: {{ .Values.celeryScheduler.celeryScheduler.image.repository }}:{{ .Values.celeryScheduler.celeryScheduler.image.tag
-          | default .Chart.AppVersion }}
-        name: celery-scheduler
-        resources: {}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "helm.fullname" . }}-worker-news
-  labels:
-  {{- include "helm.labels" . | nindent 4 }}
-spec:
-  replicas: {{ .Values.celeryWorkerNews.replicas }}
-  selector:
-    matchLabels:
-      app: celery-worker-news
-    {{- include "helm.selectorLabels" . | nindent 6 }}
-  template:
-    metadata:
-      labels:
-        app: celery-worker-news
-      {{- include "helm.selectorLabels" . | nindent 8 }}
-    spec:
-      containers:
-      - command:
-        - celery
-        - -A
-        - celery_app.scheduler
-        - worker
-        - -Q
-        - collector
-        env:
-        - name: CELERY_BROKER_URL
-          value: rabbitmq
-        - name: REDIS_EXTERNAL_SERVER_HOST
-          value: redis
-        image: {{ .Values.celeryWorkerNews.celeryWorkerNews.image.repository }}:{{ .Values.celeryWorkerNews.celeryWorkerNews.image.tag
-          | default .Chart.AppVersion }}
-        name: celery-worker-news
-        resources: {}
-        volumeMounts:
-        - mountPath: /app/celery_app/logs
-          name: logs
-      volumes:
-      - hostPath:
-          path: /var/log/newslingo/news
-          type: DirectoryOrCreate
-        name: logs
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: {{ include "helm.fullname" . }}-postgres
   labels:
   {{- include "helm.labels" . | nindent 4 }}
@@ -178,3 +99,82 @@ spec:
         ports:
         - containerPort: 6379
         resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}-scheduler
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.celeryScheduler.replicas }}
+  selector:
+    matchLabels:
+      app: celery-scheduler
+    {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: celery-scheduler
+      {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - celery
+        - -A
+        - celery_app.scheduler
+        - beat
+        - --loglevel=info
+        env:
+        - name: CELERY_BROKER_URL
+          value: rabbitmq
+        - name: REDIS_EXTERNAL_SERVER_HOST
+          value: redis
+        image: {{ .Values.celeryScheduler.celeryScheduler.image.repository }}:{{ .Values.celeryScheduler.celeryScheduler.image.tag
+          | default .Chart.AppVersion }}
+        name: celery-scheduler
+        resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}-worker-news
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.celeryWorkerNews.replicas }}
+  selector:
+    matchLabels:
+      app: celery-worker-news
+    {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: celery-worker-news
+      {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - celery
+        - -A
+        - celery_app.scheduler
+        - worker
+        - -Q
+        - collector
+        env:
+        - name: CELERY_BROKER_URL
+          value: rabbitmq
+        - name: REDIS_EXTERNAL_SERVER_HOST
+          value: redis
+        image: {{ .Values.celeryWorkerNews.celeryWorkerNews.image.repository }}:{{ .Values.celeryWorkerNews.celeryWorkerNews.image.tag
+          | default .Chart.AppVersion }}
+        name: celery-worker-news
+        resources: {}
+        volumeMounts:
+        - mountPath: /app/celery_app/logs
+          name: logs
+      volumes:
+      - hostPath:
+          path: /var/log/newslingo/news
+          type: DirectoryOrCreate
+        name: logs
