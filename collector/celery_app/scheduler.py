@@ -57,7 +57,10 @@ def collect_news():
                     )
                     continue
 
-                translated_title = googletrans_translate(title, "en", "ko").text
+                if title == "STOCK":
+                    translated_title = "주식"
+                else:
+                    translated_title = googletrans_translate(title, "en", "ko").text
                 translated_content = googletrans_translate(content, "en", "ko").text
 
                 if not validate_paragraphs(content, translated_content):

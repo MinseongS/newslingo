@@ -2,7 +2,7 @@ apiVersion: skaffold/v3
 kind: Config
 build:
   artifacts:
-    - image: registry.gocap.kr/template/ai
+    - image: localhost:5000/newslingo-server
       platforms: ["linux/amd64"]
       context: .
       docker:
@@ -10,9 +10,9 @@ build:
 deploy:
   helm:
     releases:
-      - name: template
+      - name: newslingo-server
         chartPath: helm
-        namespace: template
+        namespace: newslingo
         createNamespace: true
         setValueTemplates:
           image.repository: "{{.IMAGE_REPO}}"

@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model news {
+  id             Int            @id @default(autoincrement())
+  news_id        String         @unique(map: "ix_news_news_id") @db.VarChar
+  news_url       String         @db.VarChar
+  thum_url       String?        @db.VarChar
+  broadcast_date DateTime       @db.Timestamp(6)
+  news_english   news_english[]
+  news_korean    news_korean[]
+
+  @@index([id], map: "ix_news_id")
+}
+
+model news_english {
+  id       Int    @id @default(autoincrement())
+  news_id  String @db.VarChar
+  language String @db.VarChar
+  title    String
+  content  String
+  news     news   @relation(fields: [news_id], references: [news_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_news_english_id")
+  @@index([news_id], map: "ix_news_english_news_id")
+}
+
+model news_korean {
+  id       Int    @id @default(autoincrement())
+  news_id  String @db.VarChar
+  language String @db.VarChar
+  title    String
+  content  String
+  news     news   @relation(fields: [news_id], references: [news_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_news_korean_id")
+  @@index([news_id], map: "ix_news_korean_news_id")
+}

@@ -16,10 +16,6 @@ router_list = [
 ]
 
 
-async def init_services(config: Settings):
-    await init_inference(config)
-
-
 async def cleanup_services():
     pass
 
@@ -31,7 +27,6 @@ async def init_app(app: FastAPI):
     config = get_config()
     load_dotenv(override=True)
     init_log()
-    await init_services(config)
     yield
     await cleanup_services()
 

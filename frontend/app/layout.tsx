@@ -58,7 +58,7 @@ export default function RootLayout({
                     className="font-bold hover:underline"
                     rel="noreferrer"
                   >
-                    Supabase
+                    Newslingo
                   </a>
                 </p>
                 <ThemeSwitcher />

@@ -39,6 +39,7 @@ evidences
 celerybeat-schedule.*
 
 .env*
+!.env.example
 
 logs/
 
