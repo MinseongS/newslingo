@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: newslingo-frontend
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - newslingo.site
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+      tls:
+    - hosts:
+        - newslingo.site
+      port:
+        name: https
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: newslingo.site
+        mode: SIMPLE

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.newslingoFrontend.replicas }}
+  selector:
+    matchLabels:
+      app: newslingo-frontend
+    {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: newslingo-frontend
+      {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.newslingoFrontend.image.repository }}:{{ .Values.newslingoFrontend.image.tag
+          | default .Chart.AppVersion }}
+        name: newslingo-frontend
+        ports:
+        - containerPort: 3000
+        resources: {}

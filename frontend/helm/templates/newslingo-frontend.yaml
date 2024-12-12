@@ -1,0 +1,88 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+  namespace: istio-system
+spec:
+  dnsNames:
+  - 'newslingo.site'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-issuer
+  renewBefore: 360h0m0s
+  secretName: newslingo-frontend-tls
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ include "helm.fullname" . }}-gateway
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingress
+  servers:
+  - hosts:
+    - newslingo.site
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+    tls: null
+  - hosts:
+    - newslingo.site
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      credentialName: newslingo-frontend-tls
+      mode: SIMPLE
+
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  gateways:
+  - newslingo-frontend-gateway
+  hosts:
+  - newslingo.site
+  http:
+  - corsPolicy:
+      allowHeaders:
+      - '*'
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - OPTIONS
+      allowOrigins:
+      - regex: .*
+    route:
+    - destination:
+        host: newslingo-frontend.newslingo.svc.cluster.local
+        port:
+          number: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+  {{- include "helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.newslingoFrontend.type }}
+  selector:
+    app: newslingo-frontend
+  {{- include "helm.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.newslingoFrontend.ports | toYaml | nindent 2 -}}

@@ -1,0 +1,10 @@
+fullnameOverride: newslingo-frontend
+newslingoFrontend:
+  image:
+    repository: localhost:5000/newslingo-frontend
+    tag: latest
+  ports:
+  - port: 3000
+    targetPort: 3000
+  replicas: 1
+  type: ClusterIP

@@ -21,11 +21,9 @@ export async function GET(req: NextRequest) {
       if (!news) {
         return NextResponse.json({ message: "News not found" }, { status: 404 });
       }
-      console.log(news)
 
       return NextResponse.json(news);
     } else {
-      // 전체 뉴스 가져오기: 최신순, 영어 뉴스만, 페이징 적용
       const newsList = await prisma.news.findMany({
         orderBy: {
           id: "desc", // 최신순 정렬

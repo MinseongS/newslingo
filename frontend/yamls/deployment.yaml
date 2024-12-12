@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: newslingo-frontend
+  namespace: newslingo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: newslingo-frontend
+  template:
+    metadata:
+      labels:
+        app: newslingo-frontend
+    spec:
+      containers:
+        - name: newslingo-frontend
+          image: localhost:5000/newslingo-frontend:latest
+          ports:
+            - containerPort: 3000
+          

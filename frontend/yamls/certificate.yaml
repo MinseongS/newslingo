@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: newslingo-frontend
+  namespace: istio-system
+spec:
+  dnsNames:
+  - newslingo.site
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-issuer
+  renewBefore: 360h0m0s
+  secretName: newslingo-frontend

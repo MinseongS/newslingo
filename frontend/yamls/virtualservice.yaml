@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: newslingo-frontend
+spec:
+  gateways:
+    - newslingo-frontend
+  hosts:
+    - newslingo.site
+  http:
+    - route:
+        - destination:
+            host: newslingo-frontend.newslingo.svc.cluster.local
+            port:
+              number: 3000
+      corsPolicy:
+        allowOrigins:
+        - regex: ".*"
+        allowHeaders:
+        - "*"
+        allowMethods:
+        - GET
+        - POST
+        - PUT
+        - OPTIONS

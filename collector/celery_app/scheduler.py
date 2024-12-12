@@ -48,10 +48,13 @@ def collect_news():
                 content = normalize_newlines(item["content"])
                 title = normalize_newlines(item["title"])
 
+                content = content.replace("<div></div><div><br></div>", "")
+
                 korean_percentage = calculate_korean_percentage(content)
+                korean_percentage_title = calculate_korean_percentage(title)
                 log.debug(f"Korean content percentage: {korean_percentage:.2f}%")
 
-                if korean_percentage > 10:
+                if korean_percentage > 10 or korean_percentage_title > 10:
                     log.warning(
                         f"Skipping news_id: {news_id} due to high Korean percentage ({korean_percentage:.2f}%)."
                     )
