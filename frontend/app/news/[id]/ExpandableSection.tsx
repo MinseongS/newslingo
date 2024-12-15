@@ -7,10 +7,10 @@ export default function ExpandableSection({ content }: { content: string }) {
     const [visible, setVisible] = useState(false);
 
     return (
-        <div className="bg-gray-100 p-4 rounded-md">
+        <div className="bg-gray-100 p-4 rounded-md dark:bg-gray-800">
             <button
                 onClick={() => setVisible(!visible)}
-                className="flex items-center gap-2 text-gray-600"
+                className="flex items-center gap-2 text-gray-600 dark:text-gray-200"
             >
                 {visible ? (
                     <AiOutlineDown className="text-lg" />
@@ -19,7 +19,7 @@ export default function ExpandableSection({ content }: { content: string }) {
                 )}
             </button>
             {visible && (
-                <div className="mt-2 text-gray-700">
+                <div className="mt-2 text-gray-700 dark:text-gray-400">
                     <p>{content}</p>
                 </div>
             )}

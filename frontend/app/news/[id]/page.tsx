@@ -59,7 +59,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                 {combinedContent.map((section, index) => (
                     <div key={index}>
                         {section.type === "english" ? (
-                            <div className="text-gray-700">
+                            <div>
                                 <p>{section.content}</p>
                             </div>
                         ) : (
