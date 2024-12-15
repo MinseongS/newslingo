@@ -2,19 +2,13 @@ import { NewsItemDetail } from "@/types/types";
 import Image from "next/image";
 import ExpandableSection from "./ExpandableSection";
 import { formatDateKST } from "@/utils/utils";
+import Comments from "./Comments";
 
 // SSR 모드 강제: 이 설정을 통해 빌드 시 정적화 대신 런타임 SSR을 강제합니다.
 export const dynamic = "force-dynamic";
 
-// SSR로 전환하면 generateStaticParams는 제거합니다.
-// export async function generateStaticParams() {
-//     // SSG를 위해 자기 자신에게 fetch하는 로직 제거
-//     // 또는 외부 API 사용 가능 시 외부 API로 대체
-// }
 
 async function fetchNewsDetail(id: string) {
-    // 여기서는 실제 프로덕션 API Endpoint 또는 외부 API 주소를 사용하세요.
-    // 로컬 빌드시 localhost:3000 호출을 피해야 합니다.
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
     const res = await fetch(`${baseUrl}/api/news?news_id=${id}`);
     if (!res.ok) {
@@ -74,6 +68,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                     </div>
                 ))}
             </div>
+            <Comments newsId={id} />
         </div>
     );
 }

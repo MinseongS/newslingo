@@ -15,6 +15,7 @@ model news {
   broadcast_date DateTime       @db.Timestamp(6)
   news_english   news_english[]
   news_korean    news_korean[]
+  comments       comment[]
 
   @@index([id], map: "ix_news_id")
 }
@@ -41,4 +42,43 @@ model news_korean {
 
   @@index([id], map: "ix_news_korean_id")
   @@index([news_id], map: "ix_news_korean_news_id")
+}
+
+model comment {
+  id        Int      @id @default(autoincrement())
+  news_id   String   @db.VarChar
+  content   String   // 댓글 내용
+  userId    Int?     // 댓글 작성자 (옵션)
+  createdAt DateTime @default(now()) // 댓글 작성 시간
+  news      news     @relation(fields: [news_id], references: [news_id], onDelete: Cascade, onUpdate: Cascade) // 뉴스와의 관계
+  user      user?    @relation(fields: [userId], references: [id], onDelete: SetNull) // 사용자와의 관계 (옵션)
+
+  @@index([id], map: "ix_comment_id")
+  @@index([news_id], map: "ix_comment_news_id")
+  @@index([userId], map: "ix_comment_user_id")
+}
+
+model user {
+  id             Int             @id @default(autoincrement()) // 기본 키
+  providerId     String          @db.VarChar
+  email          String?         @unique                      // 이메일 (선택적, 외부 데이터)
+  name           String?
+  profilePicture String?         @db.VarChar
+  oauthAccount   o_auth_account? @relation("UserToOAuthAccount") // 관계 이름 설정
+  comments       comment[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model o_auth_account {
+  id           Int      @id @default(autoincrement()) // 기본 키
+  provider     String   // OAuth 제공자 이름 (e.g., "google", "facebook")
+  providerId   String   @unique                      // 제공자별 사용자 고유 ID
+  accessToken  String   @db.VarChar
+  refreshToken String?  @db.VarChar // 초기 발급 시 저장
+  expiresAt    DateTime // Access Token 만료 시간
+  scope        String?  @db.VarChar // 권한 범위
+  tokenType    String   @db.VarChar
+  user         user?    @relation("UserToOAuthAccount", fields: [userId], references: [id], onDelete: Cascade) // 관계 이름 + 필드와 참조
+  userId       Int?     @unique // 사용자와 1:1 관계를 보장
 }

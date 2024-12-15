@@ -1,14 +1,15 @@
-FROM node:22.3.0 as build-stage
+FROM node:20.18.0 as build-stage
 
 WORKDIR /app
 
 COPY package.json .
+COPY package-lock.json .
 # COPY yarn.lock .
 RUN npm install 
 
 # copy source
 COPY . /app
-
+RUN npx prisma generate
 # build 
 RUN npm run build
 
