@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Comment } from "@/types/types";
 import { useSession } from "next-auth/react"; // useSession 가져오기
+import { formatDateKST } from "@/utils/utils";
 
 async function fetchComments(newsId: string): Promise<Comment[]> {
     const res = await fetch(`/api/comments?news_id=${newsId}`);
@@ -99,10 +100,10 @@ export default function Comments({ newsId }: { newsId: string }) {
                         )}
                         <div>
                             <p className="text-sm font-bold">{comment.userName || "Anonymous"}</p>
-                            <p className="text-gray-700">{comment.content}</p>
                             <p className="text-xs text-gray-500">
-                                {new Date(comment.createdAt).toLocaleString()}
+                                {formatDateKST(comment.createdAt)}
                             </p>
+                            <p className="text-gray-700">{comment.content}</p>
                             {comment.userId === session?.user?.id && (
                                 <button
                                     onClick={() => handleDelete(comment.id)}

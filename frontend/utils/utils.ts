@@ -28,9 +28,6 @@ export function formatDateKST(dateString: string): string {
 }
 
 export function getCurrentKSTTime() {
-  const now = new Date();
-  // 한국 시간대 (UTC+9)으로 변환
-  const kstOffset = 9 * 60 * 60 * 1000; // UTC+9의 밀리초
-  const kstTime = new Date(now.getTime() + kstOffset).toISOString().replace("T", " ").slice(0, -5); // ISO 시간 포맷 조정
+  const kstTime = new Date().toString().replace("T", " ").slice(0, -5); // ISO 시간 포맷 조정
   return kstTime;
 }

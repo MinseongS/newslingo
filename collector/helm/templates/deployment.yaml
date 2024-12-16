@@ -18,6 +18,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: TZ
+          value: Asia/Seoul
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:

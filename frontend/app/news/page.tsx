@@ -2,6 +2,7 @@ import { NewsItem } from "@/types/types";
 import { formatDateKST } from "@/utils/utils";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { notFound } from "next/navigation";
 
 const pageSize = 20;
 
@@ -26,6 +27,10 @@ export default async function NewsPage({
 }) {
     const params = await searchParams;
     const currentPage = parseInt(params.page || "1", 10);
+
+    if (currentPage <= 0) {
+        notFound();
+    }
 
     const data = await fetchNews(currentPage);
     const newsList: NewsItem[] = data.data;
