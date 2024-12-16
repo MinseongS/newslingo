@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://newslingo.site
+
+# Sitemaps
+Sitemap: https://newslingo.site/sitemap.xml
+Sitemap: https://newslingo.site/sitemap-0.xml

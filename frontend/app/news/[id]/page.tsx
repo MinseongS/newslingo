@@ -68,6 +68,17 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                     </div>
                 ))}
             </div>
+            <div className="text-xs text-gray-500 mt-4">
+                Arirang news{" "}
+                <a
+                    href={news.news_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-gray-400"
+                >
+                    {news.news_url}
+                </a>
+            </div>
             <Comments newsId={id} />
         </div>
     );

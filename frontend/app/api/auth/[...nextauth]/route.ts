@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/lib/prisma";
 import { JWT } from "next-auth/jwt";
 import logger from "@/lib/logger";
+import { getCurrentKSTTime } from "@/utils/utils";
 
 const authOptions: NextAuthOptions = {
     providers: [
@@ -35,8 +36,9 @@ const authOptions: NextAuthOptions = {
                 include: { user: true },
             });
 
+            const currentTime = new Date().toISOString();
             if (!existingAccount) {
-                logger.info({ user }, "create user");
+                logger.info(`[${getCurrentKSTTime()}] ${user.name} ${user.email} create user`);
                 await prisma.user.create({
                     data: {
                         providerId,
@@ -78,7 +80,7 @@ const authOptions: NextAuthOptions = {
                     });
                 }
             }
-            logger.info({ user }, "signIn");
+            logger.info(`[${getCurrentKSTTime()}] ${user.name} ${user.email} signIn user`);
 
             return true;
         },
