@@ -31,7 +31,7 @@ def init_postgresql():
     SessionLocal = scoped_session(
         sessionmaker(autocommit=False, autoflush=False, bind=engine)
     )
-    log.info("PostgreSQL database initialized.")
+    log.info(f"PostgreSQL database initialized. {DATABASE_URL}")
 
     # 데이터베이스 테이블 생성
     Base.metadata.create_all(bind=engine)

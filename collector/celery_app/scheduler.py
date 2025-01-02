@@ -6,6 +6,7 @@ from . import celery_config
 from .models.init_db import init_postgresql, Atomic
 from .services.collect_news import get_arirang_news
 from .services.translate import googletrans_translate
+from .services.classify_news import classify_news
 
 from .models.news.news import News
 from .models.news.english_news import NewsEnglish
@@ -79,12 +80,19 @@ def collect_news():
                     )
                     continue
 
+                try:
+                    news_category = classify_news(content)["category"]
+                except Exception as e:
+                    log.error(f"Error while classifying news: {e}")
+                    continue
+
                 news_obj = News.create(
                     db,
                     news_id=news_id,
                     news_url=item["news_url"],
                     broadcast_date=item["broadcast_date"],
                     thum_url=item["thum_url"],
+                    category=news_category,
                 )
 
                 NewsEnglish.create(

@@ -13,6 +13,7 @@ model news {
   news_url       String         @db.VarChar
   thum_url       String?        @db.VarChar
   broadcast_date DateTime       @db.Timestamp(6)
+  category       String?        @db.VarChar 
   news_english   news_english[]
   news_korean    news_korean[]
   comments       comment[]
@@ -47,9 +48,13 @@ model news_korean {
 model comment {
   id        Int      @id @default(autoincrement())
   news_id   String   @db.VarChar
+  parentId  Int? 
   content   String   // 댓글 내용
   userId    Int?     // 댓글 작성자 (옵션)
   createdAt DateTime @default(now()) // 댓글 작성 시간
+  updatedAt DateTime @default(now()) @updatedAt
+  parent    comment? @relation("CommentToParent", fields: [parentId], references: [id], onDelete: Cascade) // 부모 댓글과의 관계
+  children  comment[] @relation("CommentToParent") // 대댓글 (자식 댓글들)
   news      news     @relation(fields: [news_id], references: [news_id], onDelete: Cascade, onUpdate: Cascade) // 뉴스와의 관계
   user      user?    @relation(fields: [userId], references: [id], onDelete: SetNull) // 사용자와의 관계 (옵션)
 
@@ -59,15 +64,17 @@ model comment {
 }
 
 model user {
-  id             Int             @id @default(autoincrement()) // 기본 키
+  id             Int             @id @default(autoincrement())
   providerId     String          @db.VarChar
-  email          String?         @unique                      // 이메일 (선택적, 외부 데이터)
+  email          String?         @unique
   name           String?
   profilePicture String?         @db.VarChar
-  oauthAccount   o_auth_account? @relation("UserToOAuthAccount") // 관계 이름 설정
+  oauthAccount   o_auth_account? @relation("UserToOAuthAccount")
   comments       comment[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  boardComments  board_comment[] // 추가: 작성한 게시판 댓글
+  posts          post[]          @relation("UserToPost")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model o_auth_account {
@@ -81,4 +88,40 @@ model o_auth_account {
   tokenType    String   @db.VarChar
   user         user?    @relation("UserToOAuthAccount", fields: [userId], references: [id], onDelete: Cascade) // 관계 이름 + 필드와 참조
   userId       Int?     @unique // 사용자와 1:1 관계를 보장
+}
+
+model board {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar // 게시판 이름 (e.g., 자유게시판)
+  description String? @db.VarChar // 게시판 설명
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  posts      post[]
+}
+
+model post {
+  id         Int      @id @default(autoincrement())
+  boardId    Int
+  title      String   @db.VarChar
+  content    String
+  userId     Int?     // 작성자 ID (익명 허용)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  board      board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  author     user?    @relation("UserToPost", fields: [userId], references: [id], onDelete: SetNull) // 수정: 관계 이름 추가
+  comments   board_comment[]
+}
+
+model board_comment {
+  id         Int              @id @default(autoincrement())
+  postId     Int
+  parentId   Int?             // 부모 댓글 ID
+  content    String
+  userId     Int?             // 작성자 ID (익명 허용)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  post       post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent     board_comment?   @relation("CommentToParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children   board_comment[]  @relation("CommentToParent") // 부모 댓글이 가진 자식 댓글들
+  user       user?            @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

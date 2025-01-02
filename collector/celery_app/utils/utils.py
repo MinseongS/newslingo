@@ -1,18 +1,29 @@
 import re
 
 
-def split_paragraphs(text):
+def split_paragraphs(text, delimiter="\n\n"):
     text = normalize_newlines(text)
-    paragraphs = [para.strip() for para in text.split("\n\n") if para.strip()]
+    paragraphs = [para.strip() for para in text.split(delimiter) if para.strip()]
     return paragraphs
 
 
 def validate_paragraphs(english_text, korean_text):
-    english_paragraphs = split_paragraphs(english_text)
-    korean_paragraphs = split_paragraphs(korean_text)
+    english_paragraphs_by_double_newline = split_paragraphs(english_text, "\n\n")
+    korean_paragraphs_by_double_newline = split_paragraphs(korean_text, "\n\n")
 
-    if len(english_paragraphs) != len(korean_paragraphs):
+    english_paragraphs_by_single_newline = split_paragraphs(english_text, "\n")
+    korean_paragraphs_by_single_newline = split_paragraphs(korean_text, "\n")
+
+    if len(english_paragraphs_by_double_newline) != len(
+        korean_paragraphs_by_double_newline
+    ):
         return False
+
+    if len(english_paragraphs_by_single_newline) != len(
+        korean_paragraphs_by_single_newline
+    ):
+        return False
+
     return True
 
 

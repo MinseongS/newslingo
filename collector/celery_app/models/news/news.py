@@ -11,6 +11,7 @@ class News(Base):
     news_url = Column(String, nullable=False)
     thum_url = Column(String, nullable=True)
     broadcast_date = Column(DateTime, nullable=False)
+    category = Column(String, nullable=True)
 
     @classmethod
     def create(
@@ -19,6 +20,7 @@ class News(Base):
         news_id: str,
         news_url: str,
         broadcast_date: DateTime,
+        category: str = None,
         thum_url: str = None,
     ):
         """
@@ -35,6 +37,7 @@ class News(Base):
             news_id=news_id,
             news_url=news_url,
             broadcast_date=broadcast_date,
+            category=category,
             thum_url=thum_url,
         )
         db.add(new_news)
