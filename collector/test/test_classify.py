@@ -43,7 +43,7 @@ def test_classify_news_and_update():
 def test_classify_all_news_and_update():
     with Atomic() as db:
         # Arrange: 카테고리가 없는 모든 뉴스 항목 가져오기
-        news_items = db.query(News).filter(News.category.is_(None)).all()[:80]
+        news_items = db.query(News).filter(News.category.is_(None)).all()[:150]
         assert news_items, "No news items found without a category for testing."
 
         for news_item in news_items:

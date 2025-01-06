@@ -16,6 +16,7 @@ PREDEFINED_CATEGORIES = [
     "Sports",
     "Entertainment",
     "Politics",
+    "Weather",
 ]
 
 
