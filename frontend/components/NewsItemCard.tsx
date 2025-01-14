@@ -41,9 +41,9 @@ export default function NewsItemCard({
                     <Image
                         src={thumbUrl}
                         alt={title}
-                        width={128}
-                        height={128}
+                        fill
                         onLoad={() => setIsLoaded(true)}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className={`object-cover w-full h-full rounded-md transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
                     />
                 )}

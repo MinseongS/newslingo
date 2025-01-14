@@ -6,6 +6,7 @@ export interface NewsItem {
     thum_url: string | null;
     broadcast_date: string;
     news_english: News[];
+    category: string;
 }
 
 export interface NewsItemDetail {

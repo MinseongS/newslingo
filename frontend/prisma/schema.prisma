@@ -92,7 +92,7 @@ model o_auth_account {
 
 model board {
   id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar // 게시판 이름 (e.g., 자유게시판)
+  name       String   @db.VarChar @unique// 게시판 이름 (e.g., 자유게시판)
   description String? @db.VarChar // 게시판 설명
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

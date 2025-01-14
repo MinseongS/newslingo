@@ -4,6 +4,7 @@ import ExpandableSection from "./ExpandableSection";
 import { formatDateKST } from "@/utils/utils";
 import Comments from "./Comments";
 import Head from "next/head";
+import { split } from "sentence-splitter";
 
 // SSR 모드 강제: 이 설정을 통해 빌드 시 정적화 대신 런타임 SSR을 강제합니다.
 export const dynamic = "force-dynamic";
@@ -21,15 +22,58 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
     const { id } = await params;
     const news = await fetchNewsDetail(id);
 
-    const englishParts = news.news_english[0].content.split("\n\n");
-    const koreanParts = news.news_korean[0].content.split("\n\n");
+    function splitSentences(text: string): string[] {
+        const result = split(text);
+        return result
+            .filter(sentence => sentence.type === "Sentence")
+            .map(sentence => sentence.raw.trim()); // 공백 제거
+    }
+
+    // 빈 텍스트와 공백만 있는 항목 제거
+    function cleanParts(parts: string[]): string[] {
+        return parts
+            .map(part => part.trim()) // 공백 제거
+            .filter(Boolean); // 비어 있거나 공백만 있는 항목 제거
+    }
+
+    // 빈 텍스트 제거 및 문단 나누기
+    let englishParts = cleanParts(news.news_english[0].content.split("\n\n"));
+    let koreanParts = cleanParts(news.news_korean[0].content.split("\n\n"));
+
+    // 덩어리가 하나뿐일 경우 sentence-splitter로 문장 단위로 나누기
+    if (englishParts.length === 1) {
+        englishParts = cleanParts(news.news_english[0].content.split("\n"));
+    }
+    if (koreanParts.length === 1) {
+        koreanParts = cleanParts(news.news_korean[0].content.split("\n"));
+    }
+
+    // 덩어리가 하나뿐일 경우 sentence-splitter로 문장 단위로 나누기
+    if (englishParts.length === 1) {
+        englishParts = splitSentences(englishParts[0]);
+    }
+    if (koreanParts.length === 1) {
+        koreanParts = splitSentences(koreanParts[0]);
+    }
+
+    // 문장의 개수가 동일한지 확인
+    const isMatchingLength = englishParts.length === koreanParts.length;
 
     const combinedContent = [];
-    for (let i = 0; i < englishParts.length; i++) {
-        combinedContent.push({ type: "english", content: englishParts[i] });
-        if (koreanParts[i]) {
-            combinedContent.push({ type: "korean", content: koreanParts[i] });
+    if (isMatchingLength) {
+        // 문장 개수가 같을 경우: 영어와 한국어를 매칭하여 표시
+        for (let i = 0; i < englishParts.length; i++) {
+            combinedContent.push({ type: "english", content: englishParts[i] });
+            if (koreanParts[i]) {
+                combinedContent.push({ type: "korean", content: koreanParts[i] });
+            }
         }
+    } else {
+        // 문장 개수가 맞지 않을 경우: 원본 덩어리를 그대로 표시
+        combinedContent.push(
+            { type: "english", content: news.news_english[0].content },
+            { type: "korean", content: news.news_korean[0].content }
+        );
     }
 
     // description 생성: 뉴스 본문 중 첫 번째 문장을 요약으로 사용

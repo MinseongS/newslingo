@@ -128,7 +128,7 @@ export default function Comments({ newsId }: { newsId: string }) {
                     />
                     <button
                         type="submit"
-                        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
                         Submit
                     </button>
