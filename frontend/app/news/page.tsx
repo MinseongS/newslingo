@@ -8,6 +8,7 @@ import {
     ChevronsRight,
 } from "lucide-react";
 import NewsItemCard from "@/components/NewsItemCard";
+import { notFound } from "next/navigation";
 
 const pageSize = 20;
 const categories = [
@@ -61,7 +62,7 @@ export default async function NewsPage({
     const currentCategory = params.category || "All";
 
     if (currentPage <= 0) {
-        return <h1>404 - Page Not Found</h1>;
+        notFound();
     }
 
     const data = await fetchNews(currentPage, currentCategory);

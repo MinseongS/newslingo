@@ -6,6 +6,9 @@ import {
     ChevronsRight,
     Plus,
 } from "lucide-react";
+import { format } from "path";
+import { formatDateKST } from "@/utils/utils";
+import { notFound } from "next/navigation";
 
 const pageSize = 10;
 
@@ -38,7 +41,7 @@ export default async function BoardPage({
     const currentCategory = params.category || "free";
 
     if (currentPage <= 0 || !boardCategories.some((cat) => cat.slug === currentCategory)) {
-        return <h1>404 - Page Not Found</h1>;
+        notFound();
     }
 
     const data = await fetchBoardPosts(currentCategory, currentPage);
@@ -94,7 +97,7 @@ export default async function BoardPage({
                         >
                             <h2 className="text-lg font-bold">{post.title}</h2>
                             <p className="text-gray-500 text-sm">
-                                {new Date(post.createdAt).toLocaleDateString()}
+                                {formatDateKST(post.createdAt)}
                             </p>
                         </Link>
                     ))

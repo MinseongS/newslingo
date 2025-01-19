@@ -2,9 +2,10 @@ import { NewsItemDetail } from "@/types/types";
 import Image from "next/image";
 import ExpandableSection from "./ExpandableSection";
 import { formatDateKST } from "@/utils/utils";
-import Comments from "./Comments";
+import Comments from "@/components/Comments";
 import Head from "next/head";
 import { split } from "sentence-splitter";
+import { notFound } from "next/navigation";
 
 // SSR 모드 강제: 이 설정을 통해 빌드 시 정적화 대신 런타임 SSR을 강제합니다.
 export const dynamic = "force-dynamic";
@@ -13,7 +14,8 @@ async function fetchNewsDetail(id: string) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
     const res = await fetch(`${baseUrl}/api/news?news_id=${id}`);
     if (!res.ok) {
-        throw new Error("Failed to fetch news detail");
+        console.error(`Failed to fetch news detail with status: ${res.status}`);
+        notFound();
     }
     return res.json() as Promise<NewsItemDetail>;
 }
@@ -140,7 +142,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                     {news.news_url}
                 </a>
             </div>
-            <Comments newsId={id} />
+            <Comments resourceType="news" resourceId={String(id)} />
         </div>
     );
 }

@@ -11,10 +11,29 @@ const categoryMap = {
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id"); // 게시글 ID 확인
         const page = parseInt(searchParams.get("page") || "1", 10);
         const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
         const categorySlug = (searchParams.get("category") || "free") as keyof typeof categoryMap;
 
+        if (id) {
+            // 특정 ID로 게시글 조회
+            const post = await prisma.post.findUnique({
+                where: { id: parseInt(id, 10) },
+                include: {
+                    board: true,
+                    author: true,
+                },
+            });
+
+            if (!post) {
+                return NextResponse.json({ message: "Post not found" }, { status: 404 });
+            }
+
+            return NextResponse.json(post);
+        }
+
+        // 카테고리별 게시글 조회
         const boardName = categoryMap[categorySlug];
 
         if (!boardName) {
@@ -62,8 +81,9 @@ export async function POST(req: NextRequest) {
             title: string;
             content: string;
             category: keyof typeof categoryMap;
-            userId?: number
+            userId: number
         } = await req.json();
+
 
         const boardName = categoryMap[category];
 
@@ -71,27 +91,53 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Invalid category" }, { status: 400 });
         }
 
-        const postData: any = {
-            title,
-            content,
-            board: {
-                connect: { name: boardName },
-            },
-        };
-
-        if (userId) {
-            postData.userId = userId;
-        }
-        console.log("Creating post with data:", postData);
-        const post = await prisma.post.create({
-            data: postData,
+        // 유효한 userId인지 확인
+        const userExists = await prisma.user.findUnique({
+            where: { id: userId },
         });
 
-        console.log("Created post:", post);
+        if (!userExists) {
+            return NextResponse.json({ message: "Invalid user ID" }, { status: 400 });
+        }
+
+        // 게시글 데이터 생성
+        const post = await prisma.post.create({
+            data: {
+                title,
+                content,
+                board: {
+                    connect: { name: boardName },
+                },
+                author: {
+                    connect: { id: userId }, // userId를 통해 author 관계 설정
+                },
+            },
+        });
+
 
         return NextResponse.json(post, { status: 201 });
     } catch (error) {
         console.error("Error creating post:", error);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const postId = searchParams.get("id");
+
+    if (!postId) {
+        return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
+    }
+
+    try {
+        await prisma.post.delete({
+            where: { id: parseInt(postId, 10) },
+        });
+
+        return NextResponse.json({ message: "Post deleted successfully" }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to delete Post" }, { status: 500 });
     }
 }
