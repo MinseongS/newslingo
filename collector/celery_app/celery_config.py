@@ -4,6 +4,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab, timedelta
 from kombu import Exchange, Queue
+from celery.signals import worker_ready
 
 # RabbitMQ와 Redis 설정
 DEPLOYMENT_TARGET = os.getenv("DEPLOYMENT_TARGET")
@@ -55,11 +56,16 @@ task_queues = (
 )
 
 
+@worker_ready.connect
+def first_run(sender, **kwargs):
+    sender.app.send_task("scheduler.collect_news", queue="collector")
+
+
 # Beat 스케줄 설정
 beat_schedule = {
     "collect_news": {
         "task": "scheduler.collect_news",  # 작업 경로는 실제 경로로 수정 필요
-        "schedule": timedelta(hours=1),  # 1초마다 실행
+        "schedule": timedelta(hours=1),
         "options": {"queue": "collector"},  # collector 큐로 지정
     },
 }

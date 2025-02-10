@@ -44,3 +44,16 @@ celerybeat-schedule.*
 logs/
 
 secret.yaml
+
+# Alembic 캐시 및 임시 파일
+alembic/__pycache__/
+alembic/versions/__pycache__/
+alembic/versions/*.pyc
+alembic/versions/*.pyo
+
+# 로그 파일 (필요한 경우 추가)
+alembic/logs/
+alembic/debug.log
+
+# 가끔 사용자가 생성하는 Alembic 작업 폴더 (없을 수도 있음)
+alembic/workdir/

@@ -2,15 +2,19 @@
 
 from celery import Celery
 from celery.signals import worker_process_init
+from celery.signals import worker_ready
+
 from . import celery_config
 from .models.init_db import init_postgresql, Atomic
 from .services.collect_news import get_arirang_news
 from .services.translate import googletrans_translate
 from .services.classify_news import classify_news
+from .services.translate_llm import llm_translate_news
 
 from .models.news.news import News
 from .models.news.english_news import NewsEnglish
 from .models.news.korean_news import NewsKorean
+from .models.news.llm_translate import LlmTransalte
 
 from .configs.logging_config import get_logger, init_log
 
@@ -46,6 +50,13 @@ def collect_news():
                 news_id = item["news_url"].split("id=")[-1]
                 log.debug(f"Processing news_id: {news_id}")
 
+                existing_news = db.query(News).filter_by(news_id=news_id).first()
+                if existing_news:
+                    log.info(
+                        f"News entry already exists for news_id: {news_id}, skipping."
+                    )
+                    continue
+
                 content = normalize_newlines(item["content"])
                 title = normalize_newlines(item["title"])
 
@@ -73,12 +84,7 @@ def collect_news():
                     )
                     continue
 
-                existing_news = db.query(News).filter_by(news_id=news_id).first()
-                if existing_news:
-                    log.info(
-                        f"News entry already exists for news_id: {news_id}, skipping."
-                    )
-                    continue
+                llm_translated_content = llm_translate_news(content)
 
                 try:
                     news_category = classify_news(content)["category"]
@@ -107,6 +113,13 @@ def collect_news():
                     news_id=news_obj.news_id,
                     title=translated_title,
                     content=translated_content,
+                )
+
+                LlmTransalte.create(
+                    db,
+                    news_id=news_obj.news_id,
+                    english=llm_translated_content["english"],
+                    korean=llm_translated_content["korean"],
                 )
 
                 log.info(f"Completed processing for news_id: {news_id}")
