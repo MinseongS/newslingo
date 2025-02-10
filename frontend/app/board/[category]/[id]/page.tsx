@@ -30,7 +30,7 @@ export default async function PostPage({ params }: { params: Promise<{ category:
     return (
         <div className="max-w-4xl mx-auto p-4">
             <p className="text-sm mb-4">
-                <Link href={`/board/${post.board.code}`}>
+                <Link href={`/board?category=${post.board.code}`}>
                     <span className="font-medium">{post.board.name}</span>
                 </Link>
             </p>

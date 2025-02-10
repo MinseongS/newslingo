@@ -127,54 +127,61 @@ export default async function BoardPage({
             {/* 페이지네이션 */}
             {pagination && (
                 <div className="flex justify-center items-center mt-6 space-x-2">
+                    {/* 첫 페이지 버튼 */}
                     <Link
                         href={`/board?page=1&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
+                hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
                             }`}
+                        aria-label="Go to first page"
                     >
                         <ChevronsLeft size={16} />
                     </Link>
+
+                    {/* 이전 페이지 버튼 */}
                     <Link
                         href={`/board?page=${currentPage - 1}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
+                hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
                             }`}
+                        aria-label="Go to previous page"
                     >
                         <ChevronLeft size={16} />
                     </Link>
 
+                    {/* 페이지 번호 */}
                     {pageNumbers.map((pageNumber) => (
                         <Link
                             key={pageNumber}
                             href={`/board?page=${pageNumber}&category=${currentCategory}`}
                             className={`px-4 py-2 rounded-md ${pageNumber === currentPage
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
                                 }`}
+                            aria-label={`Go to page ${pageNumber}`}
                         >
                             {pageNumber}
                         </Link>
                     ))}
 
+                    {/* 다음 페이지 버튼 */}
                     <Link
                         href={`/board?page=${currentPage + 1}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === pagination.totalPages
-                                ? "opacity-50 pointer-events-none"
-                                : ""
+                hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage >= pagination.totalPages ? "opacity-50 pointer-events-none" : ""
                             }`}
+                        aria-label="Go to next page"
                     >
                         <ChevronRight size={16} />
                     </Link>
 
+                    {/* 마지막 페이지 버튼 */}
                     <Link
                         href={`/board?page=${pagination.totalPages}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === pagination.totalPages
-                                ? "opacity-50 pointer-events-none"
-                                : ""
+                hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage >= pagination.totalPages ? "opacity-50 pointer-events-none" : ""
                             }`}
+                        aria-label="Go to last page"
                     >
                         <ChevronsRight size={16} />
                     </Link>

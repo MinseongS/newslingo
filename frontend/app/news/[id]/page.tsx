@@ -20,6 +20,35 @@ async function fetchNewsDetail(id: string) {
     return res.json() as Promise<NewsItemDetail>;
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const news = await fetchNewsDetail(id);
+
+    // 예: 뉴스 제목 + 설명 구성
+    const description =
+        news.news_english[0].content +
+        "..." +
+        news.news_korean[0].content;
+
+    return {
+        title: `${news.news_english[0].title} - Newslingo`,
+        description,
+        openGraph: {
+            title: news.news_english[0].title,
+            description,
+            url: `https://newslingo.site/news/${id}`,
+            images: [news.thum_url || "/default-thumbnail.jpg"],
+        },
+        // 필요하다면 twitter, robots, etc. 추가
+        twitter: {
+            card: "summary_large_image",
+            title: news.news_english[0].title,
+            description,
+            images: [news.thum_url || "/default-thumbnail.jpg"],
+        },
+    };
+}
+
 export default async function NewsDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const news = await fetchNewsDetail(id);
@@ -80,14 +109,14 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
     // description 생성: 뉴스 본문 중 첫 번째 문장을 요약으로 사용
     const description =
-        news.news_english[0].content.slice(0, 150) +
+        news.news_english[0].content +
         "..." +
-        news.news_korean[0].content.slice(0, 150);
+        news.news_korean[0].content;
 
     return (
         <div className="max-w-4xl mx-auto p-4">
             {/* 동적 메타데이터 설정 */}
-            <Head>
+            {/* <Head>
                 <title>{news.news_english[0].title} - Newslingo</title>
                 <meta name="description" content={description} />
                 <meta property="og:title" content={news.news_english[0].title} />
@@ -95,7 +124,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
                 <meta property="og:image" content={news.thum_url || "/default-thumbnail.jpg"} />
                 <meta property="og:url" content={`https://newslingo.site/news/${id}`} />
                 <meta name="robots" content="index, follow" />
-            </Head>
+            </Head> */}
 
             <h1 className="text-3xl font-bold mb-6">{news.news_english[0].title}</h1>
             <p className="text-sm text-gray-500 mb-4">

@@ -8,7 +8,56 @@ import Script from "next/script";
 
 export const metadata = {
   title: "무료 영어 뉴스 공부 사이트 - Newslingo",
-  description: "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 뉴스 기사를 읽으며 실시간 번역과 함께 학습할 수 있어 영어 공부와 뉴스 이해를 동시에 할 수 있습니다. 영어 공부를 쉽고 재미있게 시작하세요. 무료로 영어 뉴스를 읽고, 학습하고, 실력을 키워보세요.",
+  description:
+    "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 뉴스 기사를 읽으며 실시간 번역과 함께 학습할 수 있어 영어 공부와 뉴스 이해를 동시에 할 수 있습니다. 영어 공부를 쉽고 재미있게 시작하세요. 무료로 영어 뉴스를 읽고, 학습하고, 실력을 키워보세요.",
+  // Next.js에서 keywords는 배열 형태로 관리
+  keywords: [
+    "영어 최신 뉴스",
+    "국내 뉴스",
+    "최신 뉴스",
+    "실시간 번역",
+    "영어 번역",
+    "Newslingo",
+    "영어 뉴스",
+    "한국어 뉴스",
+    "뉴스",
+    "실시간 번역 뉴스",
+    "영어 뉴스를 한국어로 번역",
+    "뉴스링고",
+    "뉴스 링고",
+    "최신 영어 뉴스",
+  ],
+  // <meta name="author" content="Newslingo" 를 표현하기 위한 필드
+  authors: [{ name: "Newslingo", url: "https://newslingo.site" }],
+  // <meta name="robots" content="index, follow" 를 표현하기 위한 설정
+  robots: {
+    index: true,
+    follow: true,
+  },
+  // og 태그 -> openGraph 로 설정
+  openGraph: {
+    type: "website",
+    url: "https://newslingo.site",
+    title: "무료 영어 뉴스 공부 사이트 - Newslingo",
+    description:
+      "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 공부를 쉽고 재미있게 시작하세요.",
+    images: [
+      {
+        url: "https://newslingo.site/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Newslingo OG Image",
+      },
+    ],
+  },
+  // 트위터 메타 태그 -> twitter 로 설정
+  twitter: {
+    card: "summary_large_image",
+    title: "무료 영어 뉴스 공부 사이트 - Newslingo",
+    description:
+      "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다.",
+    images: ["https://newslingo.site/og-image.jpg"],
+  },
 };
 
 
@@ -20,8 +69,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={GeistSans.className} suppressHydrationWarning>
       <head>
-        {/* 기본 메타 태그 */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="뉴스링고는 영어 뉴스를 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 공부를 쉽고 재미있게 시작하세요." />
         <meta
           name="keywords"
@@ -31,26 +79,28 @@ export default function RootLayout({
         <meta name="robots" content="index, follow" />
         <meta name="google-adsense-account" content="ca-pub-1665728096998954" />
 
-        {/* Open Graph 메타 태그 */}
         <meta property="og:title" content="무료 영어 뉴스 공부 사이트 - Newslingo" />
         <meta property="og:description" content="뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다." />
         <meta property="og:image" content="https://newslingo.site/og-image.jpg" />
         <meta property="og:url" content="https://newslingo.site" />
         <meta property="og:type" content="website" />
 
-        {/* Twitter 메타 태그 */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="무료 영어 뉴스 공부 사이트 - Newslingo" />
         <meta
           name="twitter:description"
           content="뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다."
         />
-        <meta name="twitter:image" content="https://newslingo.site/twitter-image.jpg" />
+        <meta name="twitter:image" content="https://newslingo.site/twitter-image.jpg" /> */}
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1665728096998954"
           crossOrigin="anonymous"></script>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-PG2HTB6WGL"
+        />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-QYEY9MPQ2Z"
         />
         <Script id="google-analytics">
           {`
@@ -58,6 +108,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-PG2HTB6WGL');
+            gtag('config', 'G-QYEY9MPQ2Z');
           `}
         </Script>
       </head>

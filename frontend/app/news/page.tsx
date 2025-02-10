@@ -149,8 +149,7 @@ export default async function NewsPage({
                     <Link
                         href={`/news?page=1&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
-                            }`}
+              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""}`}
                         aria-label="Go to first page"
                     >
                         <ChevronsLeft size={16} />
@@ -158,8 +157,7 @@ export default async function NewsPage({
                     <Link
                         href={`/news?page=${currentPage - 1}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""
-                            }`}
+              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""}`}
                         aria-label="Go to previous page"
                     >
                         <ChevronLeft size={16} />
@@ -182,10 +180,7 @@ export default async function NewsPage({
                     <Link
                         href={`/news?page=${currentPage + 1}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === pagination.totalPages
-                                ? "opacity-50 pointer-events-none"
-                                : ""
-                            }`}
+              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage >= pagination.totalPages ? "opacity-50 pointer-events-none" : ""}`}
                         aria-label="Go to next page"
                     >
                         <ChevronRight size={16} />
@@ -194,10 +189,7 @@ export default async function NewsPage({
                     <Link
                         href={`/news?page=${pagination.totalPages}&category=${currentCategory}`}
                         className={`p-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 
-              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage === pagination.totalPages
-                                ? "opacity-50 pointer-events-none"
-                                : ""
-                            }`}
+              hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md ${currentPage >= pagination.totalPages ? "opacity-50 pointer-events-none" : ""}`}
                         aria-label="Go to last page"
                     >
                         <ChevronsRight size={16} />
