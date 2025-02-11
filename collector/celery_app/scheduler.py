@@ -76,13 +76,13 @@ def collect_news():
                     translated_title = "주식"
                 else:
                     translated_title = googletrans_translate(title, "en", "ko").text
-                translated_content = googletrans_translate(content, "en", "ko").text
+                # translated_content = googletrans_translate(content, "en", "ko").text
 
-                if not validate_paragraphs(content, translated_content):
-                    log.warning(
-                        f"Skipping news_id: {news_id} due to paragraph mismatch."
-                    )
-                    continue
+                # if not validate_paragraphs(content, translated_content):
+                #     log.warning(
+                #         f"Skipping news_id: {news_id} due to paragraph mismatch."
+                #     )
+                #     continue
 
                 llm_translated_content = llm_translate_news(content)
 
@@ -105,22 +105,22 @@ def collect_news():
                     db,
                     news_id=news_obj.news_id,
                     title=title,
-                    content=content,
+                    content=llm_translated_content["english"],
                 )
 
                 NewsKorean.create(
                     db,
                     news_id=news_obj.news_id,
                     title=translated_title,
-                    content=translated_content,
+                    content=llm_translated_content["korean"],
                 )
 
-                LlmTransalte.create(
-                    db,
-                    news_id=news_obj.news_id,
-                    english=llm_translated_content["english"],
-                    korean=llm_translated_content["korean"],
-                )
+                # LlmTransalte.create(
+                #     db,
+                #     news_id=news_obj.news_id,
+                #     english=llm_translated_content["english"],
+                #     korean=llm_translated_content["korean"],
+                # )
 
                 log.info(f"Completed processing for news_id: {news_id}")
 
