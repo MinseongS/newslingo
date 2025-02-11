@@ -36,6 +36,12 @@ export async function GET(req: NextRequest) {
       // 만약 category 파라미터가 'all'이거나 없는 경우 => 필터 미적용
       // 즉, 전체 뉴스 가져옴
 
+      whereCondition.news_english = {
+        some: {
+          content: { not: "" },
+        }
+      };
+
       // 뉴스 목록 가져오기
       const newsList = await prisma.news.findMany({
         where: whereCondition,
