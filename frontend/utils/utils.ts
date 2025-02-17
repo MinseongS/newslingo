@@ -15,8 +15,11 @@ export function encodedRedirect(
   return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
 }
 
-export function formatDateKST(dateString: string): string {
+export function formatDateKST(dateString: string, timedelta = 0): string {
   const date = new Date(dateString);
+  if (timedelta !== 0) {
+    date.setHours(date.getHours() - timedelta);
+  }
 
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요

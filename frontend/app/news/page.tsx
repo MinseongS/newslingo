@@ -138,7 +138,7 @@ export default async function NewsPage({
                         title={news.news_english[0].title}
                         content={news.news_english[0].content}
                         thumbUrl={news.thum_url || ""}
-                        broadcastDate={formatDateKST(news.broadcast_date)}
+                        broadcastDate={formatDateKST(news.broadcast_date, 9)}
                     />
                 ))}
             </div>

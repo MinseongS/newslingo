@@ -7,25 +7,20 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import Script from "next/script";
 
 export const metadata = {
-  title: "무료 영어 뉴스 공부 사이트 - Newslingo",
+  title: "무료 영어 뉴스로 쉽고 빠른 영어 공부 | 뉴스링고 Newslingo",
   description:
-    "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 뉴스 기사를 읽으며 실시간 번역과 함께 학습할 수 있어 영어 공부와 뉴스 이해를 동시에 할 수 있습니다. 영어 공부를 쉽고 재미있게 시작하세요. 무료로 영어 뉴스를 읽고, 학습하고, 실력을 키워보세요.",
-  // Next.js에서 keywords는 배열 형태로 관리
+    "영어 공부할 때 가장 먼저 찾는 사이트! 매일 업데이트되는 최신 영어 뉴스로 쉽고 편하게 영어 공부하세요.",
   keywords: [
-    "영어 최신 뉴스",
-    "국내 뉴스",
-    "최신 뉴스",
-    "실시간 번역",
-    "영어 번역",
-    "Newslingo",
     "영어 뉴스",
-    "한국어 뉴스",
-    "뉴스",
-    "실시간 번역 뉴스",
-    "영어 뉴스를 한국어로 번역",
-    "뉴스링고",
-    "뉴스 링고",
-    "최신 영어 뉴스",
+    "영어 뉴스 사이트",
+    "무료 영어 뉴스 사이트",
+    "무료 영어 공부 사이트",
+    "영어 기사",
+    "영문 기사",
+    "영어 기사 사이트",
+    "영어 뉴스 기사",
+    "영자 신문",
+    "영어 신문 사이트"
   ],
   // <meta name="author" content="Newslingo" 를 표현하기 위한 필드
   authors: [{ name: "Newslingo", url: "https://newslingo.site" }],
@@ -38,9 +33,9 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://newslingo.site",
-    title: "무료 영어 뉴스 공부 사이트 - Newslingo",
+    title: "무료 영어 뉴스로 쉽고 빠른 영어 공부 | 뉴스링고",
     description:
-      "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다. 영어 공부를 쉽고 재미있게 시작하세요.",
+      "영어 공부할 때 가장 먼저 찾는 사이트! 매일 업데이트되는 최신 영어 뉴스로 쉽고 편하게 영어 공부하세요.",
     images: [
       {
         url: "https://newslingo.site/og-image.jpg",
@@ -53,9 +48,9 @@ export const metadata = {
   // 트위터 메타 태그 -> twitter 로 설정
   twitter: {
     card: "summary_large_image",
-    title: "무료 영어 뉴스 공부 사이트 - Newslingo",
+    title: "무료 영어 뉴스로 쉽고 빠른 영어 공부 | 뉴스링고",
     description:
-      "뉴스링고는 영어 뉴스를 실시간 번역하여 한국어로 제공하는 무료 영어 뉴스 플랫폼입니다.",
+      "영어 공부할 때 가장 먼저 찾는 사이트! 매일 업데이트되는 최신 영어 뉴스로 쉽고 편하게 영어 공부하세요.",
     images: ["https://newslingo.site/og-image.jpg"],
   },
 };
@@ -111,8 +106,25 @@ export default function RootLayout({
             gtag('config', 'G-QYEY9MPQ2Z');
           `}
         </Script>
+        <Script strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-P7QDPMMQ');
+          `}
+        </Script>
       </head>
       <body className="bg-background text-foreground">
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-P7QDPMMQ"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
         <SessionProvider>
           <ThemeProvider
             attribute="class"
