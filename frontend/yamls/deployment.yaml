@@ -18,4 +18,12 @@ spec:
           image: localhost:5000/newslingo-frontend:latest
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: images-volume
+              mountPath: "/mnt/images"  
+      volumes:
+        - name: images-volume
+          hostPath:
+            path: "/mnt/newslingo/images"  
+            type: Directory
           

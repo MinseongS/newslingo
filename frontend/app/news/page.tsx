@@ -10,11 +10,11 @@ import {
 import NewsItemCard from "@/components/NewsItemCard";
 import { notFound } from "next/navigation";
 
-// 기본 메타데이터
-export const metadata = {
-    title: "최신 무료 영어 뉴스 | 뉴스링고 Newslingo",
-    description: "최신 영어 뉴스를 무료로 읽고 공부하세요. 매일 업데이트되는 다양한 주제의 영어 뉴스를 제공합니다.",
-};
+// // 기본 메타데이터
+// export const metadata = {
+//     title: "최신 무료 영어 뉴스 | 뉴스링고 Newslingo",
+//     description: "최신 영어 뉴스를 무료로 읽고 공부하세요. 매일 업데이트되는 다양한 주제의 영어 뉴스를 제공합니다.",
+// };
 
 // 동적 메타데이터 생성 (페이지 번호, 카테고리에 따라)
 export async function generateMetadata({

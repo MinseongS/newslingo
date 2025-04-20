@@ -39,6 +39,7 @@ export interface Post {
     userId: string;
     userImage?: string;
     userName?: string;
+    imageUrl?: string;
     board: {
         name: string;
         code: string;

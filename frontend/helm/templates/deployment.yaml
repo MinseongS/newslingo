@@ -23,3 +23,11 @@ spec:
         ports:
         - containerPort: 3000
         resources: {}
+        volumeMounts:
+            - name: images-volume
+              mountPath: "/mnt/images"  
+      volumes:
+        - name: images-volume
+          hostPath:
+            path: "/mnt/newslingo/images"  
+            type: Directory
