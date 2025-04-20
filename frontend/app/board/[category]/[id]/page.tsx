@@ -59,6 +59,11 @@ export default async function PostPage({ params }: { params: Promise<{ category:
                     </p>
                 </div>
             )}
+            {post.imageUrl && (
+                <div className="mt-4">
+                    <img src={post.imageUrl} alt="Post Image" className="w-full h-auto rounded-md" />
+                </div>
+            )}
 
             <div className="text-lg">{post.content}</div>
             <Comments resourceType="board" resourceId={String(id)} />

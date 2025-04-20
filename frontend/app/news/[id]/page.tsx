@@ -35,6 +35,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
         title: `${news.news_english[0].title} - Newslingo`,
         description,
+        alternates: {
+            canonical: `/news/${id}`,
+        },
         openGraph: {
             title: news.news_english[0].title,
             description,

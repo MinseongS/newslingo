@@ -10,6 +10,47 @@ import {
 import NewsItemCard from "@/components/NewsItemCard";
 import { notFound } from "next/navigation";
 
+// 기본 메타데이터
+export const metadata = {
+    title: "최신 무료 영어 뉴스 | 뉴스링고 Newslingo",
+    description: "최신 영어 뉴스를 무료로 읽고 공부하세요. 매일 업데이트되는 다양한 주제의 영어 뉴스를 제공합니다.",
+};
+
+// 동적 메타데이터 생성 (페이지 번호, 카테고리에 따라)
+export async function generateMetadata({
+    searchParams,
+}: {
+    searchParams: { page?: string; category?: string };
+}) {
+    const page = searchParams.page || "1";
+    const category = searchParams.category || "All";
+
+    let canonicalPath = '/news';
+
+    // 첫 페이지이고 카테고리가 All일 경우 단순 /news로 canonical 설정
+    if (page !== "1" || category !== "All") {
+        canonicalPath += '?';
+        if (page !== "1") {
+            canonicalPath += `page=${page}`;
+        }
+        if (category !== "All") {
+            canonicalPath += page !== "1" ? `&category=${category}` : `category=${category}`;
+        }
+    }
+
+    return {
+        title: category !== "All"
+            ? `${category} 뉴스 - 무료 영어 뉴스 | 뉴스링고`
+            : "최신 무료 영어 뉴스 | 뉴스링고 Newslingo",
+        description: category !== "All"
+            ? `${category} 관련 최신 영어 뉴스를 무료로 읽고 공부하세요.`
+            : "최신 영어 뉴스를 무료로 읽고 공부하세요. 매일 업데이트되는 다양한 주제의 영어 뉴스를 제공합니다.",
+        alternates: {
+            canonical: canonicalPath,
+        },
+    };
+}
+
 const pageSize = 20;
 const categories = [
     "All",

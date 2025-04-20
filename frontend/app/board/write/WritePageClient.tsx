@@ -11,30 +11,41 @@ interface WritePageProps {
 export default function WritePageClient({ category }: WritePageProps) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [image, setImage] = useState<File | null>(null); // 🔹 단일 이미지 상태 추가
     const router = useRouter();
     const { data: session, status } = useSession();
 
-    // 로그인 여부 확인
     useEffect(() => {
-        // 세션이 로딩 중이 아니고, 로그인되어 있지 않다면 뒤로 가기
         if (status !== "loading" && !session?.user) {
             alert("로그인 후 이용해주세요.");
             router.back();
         }
     }, [session, status, router]);
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setImage(e.target.files[0]); // 🔹 단일 이미지 선택
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        formData.append("category", category);
+        if (image) {
+            formData.append("image", image); // 🔹 단일 이미지 추가
+        }
 
         try {
             const response = await fetch(`/api/boards`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content, category, userId: session?.user?.id }),
+                body: formData, // FormData 사용
             });
 
             if (response.ok) {
-                // 성공 시 해당 카테고리 페이지로 이동
                 router.push(`/board?category=${category}`);
             } else {
                 const errorData = await response.json();
@@ -46,12 +57,10 @@ export default function WritePageClient({ category }: WritePageProps) {
         }
     };
 
-    // 세션 로딩이 끝나기 전에는 UI를 보여주지 않음
     if (status === "loading") {
         return <div>Loading...</div>;
     }
 
-    // 세션 로딩이 끝났는데 user가 없으면(로그인 안됨), 이미 뒤로 갔으므로 UI 안보여줌
     if (!session?.user) {
         return null;
     }
@@ -59,7 +68,7 @@ export default function WritePageClient({ category }: WritePageProps) {
     return (
         <div className="max-w-4xl mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6">글쓰기</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-2">제목</label>
                     <input
@@ -80,6 +89,21 @@ export default function WritePageClient({ category }: WritePageProps) {
                         required
                     ></textarea>
                 </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-2">이미지 업로드</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                    />
+                </div>
+                {image && (
+                    <div className="mb-4">
+                        <p>미리보기:</p>
+                        <img src={URL.createObjectURL(image)} alt="Preview" className="w-32 h-32 rounded-md object-cover" />
+                    </div>
+                )}
                 <button
                     type="submit"
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"

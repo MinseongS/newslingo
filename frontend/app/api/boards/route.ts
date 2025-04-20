@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { writeFile } from "fs/promises";
+import { join } from "path";
+import { randomUUID } from "crypto";
 
 // 게시판 이름 매핑
 const categoryMap = {
@@ -77,44 +82,59 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const { title, content, category, userId }: {
-            title: string;
-            content: string;
-            category: keyof typeof categoryMap;
-            userId: number
-        } = await req.json();
+        // 🔹 세션 확인 (로그인 여부)
+        const session = await getServerSession(authOptions);
+        if (!session) {
+            return NextResponse.json({ message: "Unauthorized: 로그인 필요" }, { status: 401 });
+        }
 
-
+        // 🔹 FormData에서 데이터 가져오기 (이미지 포함)
+        const formData = await req.formData();
+        const title = formData.get("title") as string;
+        const content = formData.get("content") as string;
+        const category = formData.get("category") as keyof typeof categoryMap;
+        const imageFile = formData.get("image") as File | null;
+        const userId = parseInt(session.user.id, 10);
         const boardName = categoryMap[category];
-
         if (!boardName) {
             return NextResponse.json({ message: "Invalid category" }, { status: 400 });
         }
 
-        // 유효한 userId인지 확인
-        const userExists = await prisma.user.findUnique({
-            where: { id: userId },
-        });
+        // 🔹 이미지 저장
+        const mountPath = process.env.MOUNT_PATH || "public/uploads";
+        let imageUrl = null;
+        if (imageFile) {
+            const bytes = await imageFile.arrayBuffer();
+            const buffer = Buffer.from(bytes);
 
-        if (!userExists) {
-            return NextResponse.json({ message: "Invalid user ID" }, { status: 400 });
+            // 🔹 UUID 생성 및 원본 확장자 유지
+            const ext = imageFile.name.split(".").pop(); // 확장자 추출
+            const uniqueFileName = `${randomUUID()}.${ext}`; // UUID + 원본 확장자
+
+            const filePath = join(mountPath, uniqueFileName);
+            await writeFile(filePath, buffer);
+
+            imageUrl = `/api/images/${uniqueFileName}`; // 저장된 파일의 URL 반환
+        }
+        // 🔹 게시글 데이터 저장 (이미지 URL 포함)
+        const postData: any = {
+            title,
+            content,
+            board: {
+                connect: { name: boardName },
+            },
+            author: {
+                connect: { id: userId },
+            },
+        };
+
+        if (imageUrl) {
+            postData.imageUrl = imageUrl;
         }
 
-        // 게시글 데이터 생성
         const post = await prisma.post.create({
-            data: {
-                title,
-                content,
-                board: {
-                    connect: { name: boardName },
-                },
-                author: {
-                    connect: { id: userId }, // userId를 통해 author 관계 설정
-                },
-            },
+            data: postData,
         });
-
-
         return NextResponse.json(post, { status: 201 });
     } catch (error) {
         console.error("Error creating post:", error);
@@ -130,14 +150,32 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: "Unauthorized: 로그인 필요" }, { status: 401 });
+    }
+
     try {
+        const post = await prisma.post.findUnique({
+            where: { id: parseInt(postId, 10) },
+            select: { userId: true },
+        });
+
+        if (!post) {
+            return NextResponse.json({ error: "Post not found" }, { status: 404 });
+        }
+
+        if (post.userId !== parseInt(session.user.id, 10)) {
+            return NextResponse.json({ error: "Forbidden: 작성자만 삭제 가능" }, { status: 403 });
+        }
+
         await prisma.post.delete({
             where: { id: parseInt(postId, 10) },
         });
 
         return NextResponse.json({ message: "Post deleted successfully" }, { status: 200 });
     } catch (error) {
-        console.error(error);
+        console.error("Error deleting post:", error);
         return NextResponse.json({ error: "Failed to delete Post" }, { status: 500 });
     }
 }

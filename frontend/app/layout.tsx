@@ -29,6 +29,11 @@ export const metadata = {
     index: true,
     follow: true,
   },
+  // canonical URL 추가
+  metadataBase: new URL("https://newslingo.site"),
+  alternates: {
+    canonical: '/',
+  },
   // og 태그 -> openGraph 로 설정
   openGraph: {
     type: "website",
