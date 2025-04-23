@@ -20,10 +20,11 @@ import { notFound } from "next/navigation";
 export async function generateMetadata({
     searchParams,
 }: {
-    searchParams: { page?: string; category?: string };
+    searchParams: Promise<{ page?: string; category?: string }>;
 }) {
-    const page = searchParams.page || "1";
-    const category = searchParams.category || "All";
+    const _params = await searchParams;
+    const page = _params?.page as string || "1";
+    const category = _params?.category as string || "All";
 
     let canonicalPath = '/news';
 
@@ -69,12 +70,13 @@ async function fetchNews(page: number, category: string) {
     const response = await fetch(
         `${baseUrl}/api/news?page=${page}&pageSize=${pageSize}${categoryParam}`
     );
+    const result = await response.json();
 
     if (!response.ok) {
         throw new Error(`Failed to fetch news: ${response.statusText}`);
     }
 
-    return response.json();
+    return result;
 }
 
 export async function generateStaticParams() {
