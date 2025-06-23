@@ -1,6 +1,13 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 from celery_app.models.base import Base
+from datetime import datetime
+import pytz
+
+
+def get_kst_now():
+    """Returns the current time in KST."""
+    return datetime.now(pytz.timezone("Asia/Seoul"))
 
 
 class News(Base):
@@ -12,6 +19,11 @@ class News(Base):
     thum_url = Column(String, nullable=True)
     broadcast_date = Column(DateTime, nullable=False)
     category = Column(String, nullable=True)
+    created_date = Column(DateTime(timezone=True), default=get_kst_now, nullable=False)
+
+    tts = relationship(
+        "TTS", back_populates="news", uselist=False, cascade="all, delete-orphan"
+    )
 
     @classmethod
     def create(
@@ -41,6 +53,4 @@ class News(Base):
             thum_url=thum_url,
         )
         db.add(new_news)
-        db.commit()
-        db.refresh(new_news)
         return new_news

@@ -175,8 +175,14 @@ spec:
         volumeMounts:
         - mountPath: /app/celery_app/logs
           name: logs
+        - mountPath: /app/celery_app/tts
+          name: tts-storage
       volumes:
       - hostPath:
           path: /var/log/newslingo/news
           type: DirectoryOrCreate
         name: logs
+      - hostPath:
+          path: /mnt/newslingo/tts/
+          type: DirectoryOrCreate
+        name: tts-storage

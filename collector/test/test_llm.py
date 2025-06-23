@@ -5,11 +5,13 @@ from celery_app.models.news.news import News
 from celery_app.models.news.english_news import NewsEnglish
 from celery_app.models.news.llm_translate import LlmTransalte
 from sqlalchemy.sql import exists
+from celery_app.configs.config import get_config
 
 
 # 데이터베이스 초기화
 @pytest.fixture(autouse=True)
 def init():
+    get_config("test")
     init_postgresql()
 
 

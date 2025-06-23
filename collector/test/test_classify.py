@@ -3,11 +3,13 @@ from celery_app.models.init_db import init_postgresql, Atomic
 from celery_app.services.classify_news import classify_news
 from celery_app.models.news.news import News  # News 모델 임포트
 from celery_app.models.news.english_news import NewsEnglish
+from celery_app.configs.config import get_config
 
 
 # 데이터베이스 초기화
 @pytest.fixture(autouse=True)
 def init():
+    get_config("test")
     init_postgresql()
 
 

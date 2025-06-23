@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8, euc-kr -*-
-import os
 from celery_app.configs.logging_config import get_logger
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from celery_app.models.base import Base
+from celery_app.configs.config import get_config
 
 log = get_logger("db")
-
-load_dotenv("celery_app/configs/.env.local")
 
 # 데이터베이스를 관리하는 클래스 정의
 SessionLocal = None
@@ -22,7 +19,7 @@ def init_postgresql():
     """
     global SessionLocal, engine
 
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    DATABASE_URL = get_config()["DATABASE_URL"]
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL is not set in the environment variables.")
 

@@ -25,6 +25,5 @@ class NewsKorean(Base):
         """
         new_news_korean = cls(news_id=news_id, title=title, content=content)
         db.add(new_news_korean)
-        db.commit()
-        db.refresh(new_news_korean)
+        # The commit will be handled by the "Atomic" context manager.
         return new_news_korean
