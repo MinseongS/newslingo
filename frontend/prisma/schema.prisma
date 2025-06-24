@@ -14,10 +14,12 @@ model news {
   thum_url       String?         @db.VarChar
   broadcast_date DateTime        @db.Timestamp(6)
   category       String?         @db.VarChar
-  news_english   news_english[]
-  news_korean    news_korean[]
+  created_date   DateTime?       @db.Timestamptz(6)
   comments       comment[]
   llm_translate  llm_translate[]
+  news_english   news_english[]
+  news_korean    news_korean[]
+  tts            tts?
 
   @@index([id], map: "ix_news_id")
 }
@@ -61,14 +63,14 @@ model comment {
   id        Int       @id @default(autoincrement())
   news_id   String    @db.VarChar
   parentId  Int?
-  content   String // 댓글 내용
-  userId    Int? // 댓글 작성자 (옵션)
-  createdAt DateTime  @default(now()) // 댓글 작성 시간
+  content   String
+  userId    Int?
+  createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
-  parent    comment?  @relation("CommentToParent", fields: [parentId], references: [id], onDelete: Cascade) // 부모 댓글과의 관계
-  children  comment[] @relation("CommentToParent") // 대댓글 (자식 댓글들)
-  news      news      @relation(fields: [news_id], references: [news_id], onDelete: Cascade, onUpdate: Cascade) // 뉴스와의 관계
-  user      user?     @relation(fields: [userId], references: [id], onDelete: SetNull) // 사용자와의 관계 (옵션)
+  news      news      @relation(fields: [news_id], references: [news_id], onDelete: Cascade)
+  parent    comment?  @relation("CommentToParent", fields: [parentId], references: [id], onDelete: Cascade)
+  children  comment[] @relation("CommentToParent")
+  user      user?     @relation(fields: [userId], references: [id])
 
   @@index([id], map: "ix_comment_id")
   @@index([news_id], map: "ix_comment_news_id")
@@ -81,61 +83,71 @@ model user {
   email          String?         @unique
   name           String?
   profilePicture String?         @db.VarChar
-  oauthAccount   o_auth_account? @relation("UserToOAuthAccount")
-  comments       comment[]
-  boardComments  board_comment[] // 추가: 작성한 게시판 댓글
-  posts          post[]          @relation("UserToPost")
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-}
-
-model o_auth_account {
-  id           Int      @id @default(autoincrement()) // 기본 키
-  provider     String // OAuth 제공자 이름 (e.g., "google", "facebook")
-  providerId   String   @unique // 제공자별 사용자 고유 ID
-  accessToken  String   @db.VarChar
-  refreshToken String?  @db.VarChar // 초기 발급 시 저장
-  expiresAt    DateTime // Access Token 만료 시간
-  scope        String?  @db.VarChar // 권한 범위
-  tokenType    String   @db.VarChar
-  user         user?    @relation("UserToOAuthAccount", fields: [userId], references: [id], onDelete: Cascade) // 관계 이름 + 필드와 참조
-  userId       Int?     @unique // 사용자와 1:1 관계를 보장
+  board_comment  board_comment[]
+  comments       comment[]
+  o_auth_account o_auth_account?
+  post           post[]
 }
 
 model board {
   id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar // 게시판 이름 (e.g., 자유게시판)
+  name        String   @unique @db.VarChar
   code        String   @db.VarChar
-  description String?  @db.VarChar // 게시판 설명
+  description String?  @db.VarChar
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  posts       post[]
+  post        post[]
 }
 
-model post {
-  id        Int             @id @default(autoincrement())
-  boardId   Int
-  title     String          @db.VarChar
-  content   String
-  userId    Int? // 작성자 ID (익명 허용)
-  imageUrl  String?
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  board     board           @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  author    user?           @relation("UserToPost", fields: [userId], references: [id], onDelete: SetNull) // 수정: 관계 이름 추가
-  comments  board_comment[]
+model tts {
+  id                   Int     @id @default(autoincrement())
+  news_id              String  @unique @db.VarChar
+  full_text_audio_path String? @db.VarChar
+  sentences_audio_path Json?   @db.Json
+  news                 news    @relation(fields: [news_id], references: [news_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_tts_id")
 }
 
 model board_comment {
-  id        Int             @id @default(autoincrement())
-  postId    Int
-  parentId  Int? // 부모 댓글 ID
-  content   String
-  userId    Int? // 작성자 ID (익명 허용)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  post      post            @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parent    board_comment?  @relation("CommentToParent", fields: [parentId], references: [id], onDelete: Cascade)
-  children  board_comment[] @relation("CommentToParent") // 부모 댓글이 가진 자식 댓글들
-  user      user?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  id                  Int             @id @default(autoincrement())
+  postId              Int
+  parentId            Int?
+  content             String
+  userId              Int?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime
+  board_comment       board_comment?  @relation("board_commentToboard_comment", fields: [parentId], references: [id], onDelete: Cascade)
+  other_board_comment board_comment[] @relation("board_commentToboard_comment")
+  post                post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user                user?           @relation(fields: [userId], references: [id])
+}
+
+model o_auth_account {
+  id           Int      @id @default(autoincrement())
+  provider     String
+  providerId   String   @unique
+  accessToken  String   @db.VarChar
+  refreshToken String?  @db.VarChar
+  expiresAt    DateTime
+  scope        String?  @db.VarChar
+  tokenType    String   @db.VarChar
+  userId       Int?     @unique
+  user         user?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model post {
+  id            Int             @id @default(autoincrement())
+  boardId       Int
+  title         String          @db.VarChar
+  content       String
+  userId        Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  imageUrl      String?
+  board_comment board_comment[]
+  board         board           @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user          user?           @relation(fields: [userId], references: [id])
 }

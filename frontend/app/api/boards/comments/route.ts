@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
                 postId: Number(id),
                 content,
                 userId,
+                updatedAt: new Date(),
             },
         });
         // 생성된 댓글과 작성자 정보 가져오기

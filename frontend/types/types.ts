@@ -1,4 +1,3 @@
-
 export interface NewsItem {
     id: number;
     news_id: string;
@@ -7,6 +6,7 @@ export interface NewsItem {
     broadcast_date: string;
     news_english: News[];
     category: string;
+    created_date: string;
 }
 
 export interface NewsItemDetail {
@@ -15,8 +15,10 @@ export interface NewsItemDetail {
     news_url: string;
     thum_url: string | null;
     broadcast_date: string;
+    created_date: string;
     news_english: News[];
     news_korean: News[];
+    tts: TTS[];
 }
 
 export interface Pagination {
@@ -49,4 +51,11 @@ export interface Post {
         profilePicture: string;
         name: string;
     }
+}
+
+export interface TTS {
+    id: number;
+    news_id: string;
+    full_text_audio_path: string;
+    sentences_audio_path: string;
 }

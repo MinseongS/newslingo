@@ -40,7 +40,11 @@ class NewsTranslator(BaseTranslator):
         # 본문 번역을 위한 LangChain 체인 (JSON 출력)
         parser = JsonOutputParser(pydantic_object=TranslationOutput)
         content_prompt = ChatPromptTemplate.from_template(
-            "Translate the text. Respond with a JSON object that follows this format: {format_instructions}\n\nText: {text}",
+            "This is a News Article. Translate the following sentences into Korean. "
+            "Ensure that each English sentence is immediately followed by its Korean translation with a new line. "
+            "Keep the order exactly as given and English first then Korean. "
+            "Respond with a JSON object that follows this format: {format_instructions}\n\n"
+            "Original Sentences:\n{text}",
             partial_variables={"format_instructions": parser.get_format_instructions()},
         )
         self.content_translation_chain = content_prompt | llm | parser

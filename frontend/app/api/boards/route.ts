@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
                 where: { id: parseInt(id, 10) },
                 include: {
                     board: true,
-                    author: true,
+                    user: true,
                 },
             });
 

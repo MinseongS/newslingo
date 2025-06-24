@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         }
 
         const file = await readFile(filePath);
-        return new NextResponse(file, {
+        return new NextResponse(file as any, {
             headers: {
                 "Content-Type": "image/jpeg", // 🔹 파일 확장자에 맞게 변경 가능
             },

@@ -71,7 +71,11 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
             <h1 className="text-3xl font-bold mb-6">{news.news_english[0].title}</h1>
             <p className="text-sm text-gray-500 mb-4">
-                Published on: {formatDateKST(news.broadcast_date, 9)}
+                Published on: {
+                    news.created_date
+                        ? formatDateKST(news.created_date, 0)
+                        : formatDateKST(news.broadcast_date, 9)
+                }
             </p>
             {news.thum_url ? (
                 <div className="mb-6 relative w-full h-64">
@@ -90,7 +94,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
             )}
             <SplitModeToggle />
 
-            <SplitContent english={news.news_english[0].content} korean={news.news_korean[0].content} />
+            <SplitContent english={news.news_english[0].content} korean={news.news_korean[0].content} tts={news.tts} />
             <div className="text-xs text-gray-500 mt-4">
                 Arirang news{" "}
                 <a

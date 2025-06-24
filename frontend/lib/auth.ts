@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
                         email,
                         name,
                         profilePicture: picture,
-                        oauthAccount: {
+                        o_auth_account: {
                             create: {
                                 provider: "google",
                                 providerId,

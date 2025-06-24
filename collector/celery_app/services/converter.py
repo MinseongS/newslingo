@@ -28,7 +28,9 @@ class TTSConverter:
             try:
                 tts = gTTS(text=full_text, lang="en")
                 tts.save(full_tts_path)
-                item["full_text_audio_path"] = full_tts_path
+                item["full_text_audio_path"] = os.path.relpath(
+                    full_tts_path, self.output_dir
+                )
             except Exception as e:
                 log.error(f"Error creating full text TTS for {news_id}: {e}")
                 item["full_text_audio_path"] = None
@@ -48,7 +50,9 @@ class TTSConverter:
                 try:
                     tts = gTTS(text=original_sentence, lang="en")
                     tts.save(sentence_tts_path)
-                    sentence_pair["audio_path"] = sentence_tts_path
+                    sentence_pair["audio_path"] = os.path.relpath(
+                        sentence_tts_path, self.output_dir
+                    )
                 except Exception as e:
                     log.error(
                         f"Error creating sentence TTS for {news_id}, sentence {i}: {e}"

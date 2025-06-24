@@ -16,11 +16,27 @@ export async function GET(req: NextRequest) {
         include: {
           news_english: true,
           news_korean: true,
+          tts: true,
         },
       });
 
       if (!news) {
         return NextResponse.json({ message: "News not found" }, { status: 404 });
+      }
+
+      // AUDIO_PATH prefix 붙이기
+      const audioPathPrefix = process.env.AUDIO_PATH || "";
+      if (news.tts) {
+        const ttsArray = Array.isArray(news.tts) ? news.tts : [news.tts];
+        (news as any).tts = ttsArray.map((ttsItem: any) => ({
+          ...ttsItem,
+          full_text_audio_path: ttsItem.full_text_audio_path
+            ? audioPathPrefix + "/" + ttsItem.full_text_audio_path
+            : "",
+          sentences_audio_path: Array.isArray(ttsItem.sentences_audio_path)
+            ? ttsItem.sentences_audio_path.map((path: string) => audioPathPrefix + "/" + path)
+            : []
+        }));
       }
 
       return NextResponse.json(news);
