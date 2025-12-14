@@ -183,6 +183,6 @@ spec:
           type: DirectoryOrCreate
         name: logs
       - hostPath:
-          path: /mnt/newslingo/tts/
+          path: {{ .Values.storage.ttsPath | default "/mnt/newslingo/tts" }}
           type: DirectoryOrCreate
         name: tts-storage

@@ -2,7 +2,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-
 # Editors
 .vscode/
 vscode
@@ -28,6 +27,7 @@ test/seed_file
 
 # test log
 log/**
+logs/
 
 #
 .vscode/*
@@ -35,15 +35,28 @@ log/**
 evidences
 .excel
 
-
 celerybeat-schedule.*
 
+# Environment variables
 .env*
 !.env.example
 
-logs/
-
+# Secrets
 secret.yaml
+*.pem
+*.key
+
+# Node modules (if any in root)
+node_modules/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
 
 # Alembic 캐시 및 임시 파일
 alembic/__pycache__/
@@ -57,3 +70,10 @@ alembic/debug.log
 
 # 가끔 사용자가 생성하는 Alembic 작업 폴더 (없을 수도 있음)
 alembic/workdir/
+
+# FastText model files
+fasttext.bin
+*.bin
+
+# Docker
+.dockerignore

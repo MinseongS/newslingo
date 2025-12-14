@@ -5,13 +5,13 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: your-email@example.com
+    email: your-email@example.com  # 실제 이메일 주소로 변경하세요
     privateKeySecretRef:
       name: letsencrypt-issuer
     solvers:
     - dns01:
         cloudflare:
-          email: your-email@example.com
+          email: your-email@example.com  # 실제 이메일 주소로 변경하세요
           apiTokenSecretRef:
             name: cloudflare-api-token
             key: api-token

@@ -31,9 +31,9 @@ spec:
       volumes:
         - name: images-volume
           hostPath:
-            path: "/mnt/newslingo/images"  
+            path: "{{ .Values.storage.imagesPath | default "/mnt/newslingo/images" }}"  
             type: Directory
         - name: audio-volume
           hostPath:
-            path: "/mnt/newslingo/tts"  
+            path: "{{ .Values.storage.audioPath | default "/mnt/newslingo/tts" }}"  
             type: Directory

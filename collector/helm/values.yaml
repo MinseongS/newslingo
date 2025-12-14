@@ -23,8 +23,8 @@ postgres:
   type: NodePort
 postgresSecret:
   postgresDb: "news"
-  postgresPassword: "CHANGE_ME_PASSWORD"
-  postgresUser: "minseong"
+  postgresPassword: "CHANGE_ME"  # 실제 배포 시 시크릿으로 관리하세요
+  postgresUser: "newslingo"
 pvc:
   postgresPvc:
     storageRequest: 5Gi
@@ -55,5 +55,7 @@ redis:
       tag: "6.2"
   replicas: 1
   type: ClusterIP
+storage:
+  ttsPath: "/mnt/newslingo/tts"  # 실제 배포 시 적절한 경로로 변경하세요
 
 
