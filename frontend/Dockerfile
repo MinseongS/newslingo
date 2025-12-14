@@ -1,18 +1,27 @@
-FROM node:20.18.0 as build-stage
+FROM node:20.18.0
 
 WORKDIR /app
 
 COPY package.json .
 COPY package-lock.json .
-# COPY yarn.lock .
-RUN npm install 
+RUN npm install
 
-# copy source
 COPY . /app
 RUN npx prisma generate
-# build 
 RUN npm run build
 
-EXPOSE 3000
+# nginx 설치
+RUN apt-get update && apt-get install -y nginx
 
-CMD ["npm", "run", "start"]
+# nginx 설정 복사
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Next.js는 3000, nginx는 80
+EXPOSE 80 3000
+
+# nginx 로그를 표준출력으로
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
+
+# 동시에 실행
+CMD ["sh", "-c", "nginx -g 'daemon off;' & npm run start"]

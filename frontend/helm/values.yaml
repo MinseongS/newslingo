@@ -4,7 +4,7 @@ newslingoFrontend:
     repository: localhost:5000/newslingo-frontend
     tag: latest
   ports:
-  - port: 3000
-    targetPort: 3000
+  - port: 80
+    targetPort: 80
   replicas: 1
   type: ClusterIP

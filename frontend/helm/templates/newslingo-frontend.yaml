@@ -70,7 +70,7 @@ spec:
     - destination:
         host: newslingo-frontend.newslingo.svc.cluster.local
         port:
-          number: 3000
+          number: 80
 
 ---
 apiVersion: v1

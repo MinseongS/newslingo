@@ -21,13 +21,19 @@ spec:
           | default .Chart.AppVersion }}
         name: newslingo-frontend
         ports:
-        - containerPort: 3000
+        - containerPort: 80
         resources: {}
         volumeMounts:
             - name: images-volume
               mountPath: "/mnt/images"  
+            - name: audio-volume
+              mountPath: "/app/public/tts"  
       volumes:
         - name: images-volume
           hostPath:
             path: "/mnt/newslingo/images"  
+            type: Directory
+        - name: audio-volume
+          hostPath:
+            path: "/mnt/newslingo/tts"  
             type: Directory
