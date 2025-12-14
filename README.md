@@ -24,7 +24,6 @@
 - **Deployment**: Kubernetes, Nginx
 
 ### Backend
-- **API Server**: FastAPI (Python)
 - **Task Queue**: Celery
 - **Message Broker**: RabbitMQ
 - **Cache**: Redis
@@ -33,6 +32,8 @@
   - Google Gemini API (번역)
   - FastText (언어 감지 및 분류)
   - Google Cloud TTS (음성 합성)
+
+**Note**: Frontend는 Next.js를 사용하여 서버 사이드 렌더링 및 API 라우트를 제공합니다.
 
 ### Infrastructure
 - **Container**: Docker
@@ -44,16 +45,12 @@
 
 ```
 newslingo/
-├── frontend/          # Next.js 프론트엔드 애플리케이션
-│   ├── app/           # Next.js App Router 페이지 및 API
+├── frontend/          # Next.js 프론트엔드 및 백엔드 (서버 사이드 렌더링 + API)
+│   ├── app/           # Next.js App Router 페이지 및 API 라우트
 │   ├── components/    # React 컴포넌트
 │   ├── lib/           # 유틸리티 및 설정
 │   └── prisma/        # Prisma 스키마
-├── server/            # FastAPI 백엔드 서버
-│   └── src/
-│       ├── inference/ # AI 추론 서비스
-│       └── health/    # 헬스체크 엔드포인트
-├── collector/         # Celery 워커 및 스케줄러
+├── collector/         # Celery 워커 및 스케줄러 (데이터 수집 및 처리)
 │   └── celery_app/
 │       ├── services/  # 뉴스 수집, 번역, 분류 서비스
 │       ├── models/    # 데이터베이스 모델
@@ -100,12 +97,6 @@ RABBITMQ_USER="guest"
 RABBITMQ_DEFAULT_PASS="guest"
 ```
 
-#### Server (.env)
-```env
-PORT=8000
-RELOAD=false
-```
-
 ### 로컬 개발 환경 실행
 
 #### 1. 데이터베이스 설정
@@ -126,21 +117,14 @@ npm install
 npm run dev
 ```
 
-#### 3. Backend Server 실행
-```bash
-cd server
-pip install -r requirements.txt
-python src/run.py
-```
-
-#### 4. Celery Worker 실행
+#### 3. Celery Worker 실행
 ```bash
 cd collector
 pip install -r requirements.txt
 celery -A scheduler worker --loglevel=info
 ```
 
-#### 5. Celery Scheduler 실행
+#### 4. Celery Scheduler 실행
 ```bash
 cd collector
 celery -A scheduler beat --loglevel=info
@@ -163,6 +147,14 @@ helm install newslingo-frontend . -f values.yaml
 ## 🔄 시스템 아키텍처
 
 ![시스템 아키텍처](./docs/images/architecture.png)
+
+이 프로젝트는 **Next.js 기반의 풀스택 애플리케이션**과 **Celery 기반의 데이터 수집 파이프라인**으로 구성됩니다.
+
+- **Frontend (Next.js)**: 서버 사이드 렌더링, API 라우트, 사용자 인터페이스 제공
+- **Collector (Celery)**: 뉴스 수집, 번역, 분류, TTS 변환 등의 백그라운드 작업 처리
+- **Database (PostgreSQL)**: 뉴스 데이터, 사용자 정보, 댓글 등 저장
+- **Message Queue (RabbitMQ)**: Celery 작업 큐 관리
+- **Cache (Redis)**: Celery 결과 백엔드
 
 ## 📝 주요 기능 설명
 
@@ -197,10 +189,6 @@ alembic upgrade head
 ```bash
 # Collector 테스트
 cd collector
-pytest
-
-# Server 테스트
-cd server
 pytest
 ```
 
